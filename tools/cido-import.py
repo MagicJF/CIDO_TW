@@ -26,7 +26,8 @@ procés selectiu», de manera que la presentació és un sol lloc i no 800 còpi
 És idempotent: tornar-lo a executar amb les mateixes dades no canvia cap fitxer.
 No trepitja cap tiddler que no sigui de la funcionalitat, i no esborra res tret que
 se li demani `--purga` (que no es pot combinar amb `--limit` i que, abans de
-començar, exigeix que la descàrrega estigui verificada com a completa).
+començar, exigeix que la descàrrega estigui verificada com a completa i torna a
+preguntar a la font per cada candidat a esborrar).
 """
 
 from __future__ import annotations
@@ -49,9 +50,10 @@ ETIQUETES = f"{ETIQUETA_FUNC} convocatòria"
 COS = "<<fitxa-cido>>"
 MAX_CAPTION = 90
 PAGINA = 5000
+ENLLAC_PREFIX = "https://cido.diba.cat/oposicions/"
 # Els enllaços de la font són exactament aquests; no n'hi ha prou que la URL contingui
 # «/oposicions/», perquè un enllaç a un altre lloc acabaria escrit com si fos el procés.
-ENLLAC_RE = re.compile(r"^https://cido\.diba\.cat/oposicions/(\d+)$")
+ENLLAC_RE = re.compile(rf"^{re.escape(ENLLAC_PREFIX)}(\d+)$")
 
 # Camps de la font que es copien tal com vénen, en l'ordre en què s'escriuen.
 # La clau és el nom del camp al tiddler i el valor, el nom a la font.
@@ -98,10 +100,16 @@ def camp(text: str, nom: str) -> str:
     return ""
 
 
+def etiquetes(text: str) -> list[str]:
+    """Les etiquetes d'un tiddler, parsejades com ho fa TiddlyWiki: separades per espais,
+    i amb claudàtors dobles quan el nom porta espais (`[[El meu tema]]`)."""
+    return [a or b for a, b in re.findall(r"\[\[(.*?)\]\]|(\S+)", camp(text, "tags"))]
+
+
 def es_cido(text: str) -> bool:
     """Si el tiddler és de la funcionalitat, segons el camp `tags` i no una coincidència
     de text a la capçalera."""
-    return ETIQUETA_FUNC in camp(text, "tags").split()
+    return ETIQUETA_FUNC in etiquetes(text)
 
 
 def caption(resum: str, nom_ens: str) -> str:
@@ -160,6 +168,30 @@ def total_finestra(dies: int) -> int | None:
     except Exception as e:                                    # xarxa, format, el que sigui
         print(f"AVIS  no s'ha pogut comptar la finestra a la font: {e}", file=sys.stderr)
         return None
+
+
+def encara_a_la_finestra(candidats: list[str], dies: int, lot: int = 40) -> set[str]:
+    """Dels ids candidats a purgar, quins són de debò dins la finestra segons la font.
+
+    Les pàgines d'una descàrrega paginada no són una foto fixa: si una fila desapareix de la
+    font a mig camí, la fila següent salta de pàgina i el recompte final pot quadrar igualment.
+    Per no esborrar un procés que és viu, cada candidat es torna a preguntar a la font, en lots.
+    Si una consulta falla, l'excepció puja i no es purga res.
+    """
+    dins: set[str] = set()
+    for i in range(0, len(candidats), lot):
+        ids = candidats[i:i + lot]
+        urls = ",".join(f"'{ENLLAC_PREFIX}{x}'" for x in ids)
+        parametres = {
+            "$select": "enlla.url",
+            "$where": f"data_pub > '{finestra(dies)}T00:00:00.000' AND enlla.url in({urls})",
+            "$limit": lot,
+        }
+        for fila in consulta(f"{API}?{urllib.parse.urlencode(parametres)}"):
+            trobat = ENLLAC_RE.match(neteja(fila.get("enlla_url")))
+            if trobat:
+                dins.add(trobat.group(1))
+    return dins
 
 
 def tiddler(registre: dict, id_cido: str, enllac: str) -> tuple[str | None, str]:
@@ -230,10 +262,11 @@ def main() -> int:
     repetits = [i for i, n in comptes.items() if n > 1 and i]
     if repetits:
         print(f"AVIS  {len(repetits)} id(s) repetit(s) a la descàrrega (ex. {repetits[:3]}); "
-              f"es queda la darrera aparició")
+              f"es queda la primera aparició, que és la més nova")
 
-    escrits, iguals, descartats, alienes = 0, 0, [], []
+    escrits, iguals, descartats, alienes, repetits_al_escriure = 0, 0, [], [], []
     ids_finestra: list[str] = []      # tots els ids descarregats, convertibles o no
+    vistos: set[str] = set()
     for registre in registres:
         id_cido, enllac = id_i_enllac(registre)
         if id_cido:
@@ -242,8 +275,11 @@ def main() -> int:
         if contingut is None:
             descartats.append(motiu)
             continue
-        if args.dry_run:
+        if id_cido in vistos:
+            # La descàrrega va de més nova a més vella: el que ja s'ha escrit és el bo.
+            repetits_al_escriure.append(id_cido)
             continue
+        vistos.add(id_cido)
         desti = tiddlers / f"{id_cido}.tid"
         if desti.is_file():
             text = desti.read_text(encoding="utf-8")
@@ -254,16 +290,20 @@ def main() -> int:
             if text == contingut:
                 iguals += 1
                 continue
-        desti.write_text(contingut, encoding="utf-8")
+        if not args.dry_run:
+            desti.write_text(contingut, encoding="utf-8")
         escrits += 1
 
     if args.dry_run:
-        print(f"dry-run: escriuria {len(ids_finestra)} tiddlers")
+        print(f"dry-run: escriuria {escrits} tiddlers "
+              f"({iguals} ja estaven igual, {len(alienes)} aliens, {len(descartats)} descartats)")
     else:
         print(f"Tiddlers escrits: {escrits} | ja estaven igual: {iguals}")
     if alienes:
         print(f"AVIS  {len(alienes)} fitxer(s) amb nom de procés que no són de la funcionalitat; "
               f"no s'han tocat ({alienes[:3]})")
+    if repetits_al_escriure:
+        print(f"      {len(repetits_al_escriure)} aparició(ns) vella(es) dels mateixos ids saltades")
     if descartats:
         print(f"Descartats: {len(descartats)} ({descartats[:3]})")
 
@@ -272,11 +312,11 @@ def main() -> int:
         # pot perdre una fila si algú publica durant la descàrrega, i llavors la purga
         # trauria del wiki un procés que sí que és dins la finestra.
         problemes = []
-        if registres and not ids_finestra:
-            # Hi ha registres però cap no dona un id: ha canviat la forma de la font i
-            # purgar amb el conjunt buit ho esborraria tot.
-            problemes.append("cap registre descarregat té un id de CIDO utilitzable "
-                             "(ha canviat la forma de la font?)")
+        if len(ids_finestra) != len(registres):
+            # Qualsevol fila descarregada que no doni un id deixa el seu procés fora del
+            # conjunt que es conserva: purgar amb aquest forat esborraria un procés viu.
+            problemes.append(f"{len(registres) - len(ids_finestra)} registre(s) sense id de CIDO "
+                             "utilitzable (ha canviat la forma de la font?)")
         if repetits:
             problemes.append(f"{len(repetits)} id(s) repetit(s)")
         total = total_finestra(args.dies)
@@ -294,17 +334,29 @@ def main() -> int:
                 print(f"AVIS  la finestra és buida segons la font (0 registres): "
                       f"es treuen tots els processos que hi hagi")
             dins = set(ids_finestra)
-            fora = []
+            candidats = []
             for fitxer in sorted(tiddlers.glob("*.tid")):
-                text = fitxer.read_text(encoding="utf-8")
-                if not es_cido(text):
-                    continue
                 if fitxer.stem in dins:
                     continue
-                fora.append(fitxer)
-                fitxer.unlink()
-            print(f"Purga: {len(fora)} tiddler(s) que ja no són a la finestra"
-                  + (f" ({[f.stem for f in fora[:5]]})" if fora else ""))
+                if not es_cido(fitxer.read_text(encoding="utf-8")):
+                    continue
+                candidats.append(fitxer.stem)
+            # Segona xarxa: cada candidat es torna a preguntar a la font abans de l'unlink.
+            try:
+                vius = encara_a_la_finestra(candidats, args.dies) if candidats else set()
+            except Exception as e:
+                print(f"AVIS  no es purga: no s'han pogut tornar a comprovar els candidats a la "
+                      f"font ({e})", file=sys.stderr)
+                vius = None
+            if vius is not None:
+                if vius:
+                    print(f"AVIS  {len(vius)} procés(os) que la font encara dona dins la finestra "
+                          f"i no han arribat a la descàrrega: no s'esborren ({sorted(vius)[:3]})")
+                fora = [i for i in candidats if i not in vius]
+                for i in fora:
+                    (tiddlers / f"{i}.tid").unlink()
+                print(f"Purga: {len(fora)} tiddler(s) que ja no són a la finestra"
+                      + (f" ({fora[:5]})" if fora else ""))
 
     return 0
 
