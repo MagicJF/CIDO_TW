@@ -272,8 +272,11 @@ def main() -> int:
         # pot perdre una fila si algú publica durant la descàrrega, i llavors la purga
         # trauria del wiki un procés que sí que és dins la finestra.
         problemes = []
-        if not ids_finestra:
-            problemes.append("la descàrrega no ha portat cap id")
+        if registres and not ids_finestra:
+            # Hi ha registres però cap no dona un id: ha canviat la forma de la font i
+            # purgar amb el conjunt buit ho esborraria tot.
+            problemes.append("cap registre descarregat té un id de CIDO utilitzable "
+                             "(ha canviat la forma de la font?)")
         if repetits:
             problemes.append(f"{len(repetits)} id(s) repetit(s)")
         total = total_finestra(args.dies)
@@ -285,6 +288,11 @@ def main() -> int:
         if problemes:
             print("AVIS  no es purga: " + "; ".join(problemes), file=sys.stderr)
         else:
+            if total == 0:
+                # Una finestra buida és una resposta legítima (un dia sense publicacions),
+                # i vol dir que cap procés vell no hi pertany: es diu ben clar.
+                print(f"AVIS  la finestra és buida segons la font (0 registres): "
+                      f"es treuen tots els processos que hi hagi")
             dins = set(ids_finestra)
             fora = []
             for fitxer in sorted(tiddlers.glob("*.tid")):
