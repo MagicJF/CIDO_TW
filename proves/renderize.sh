@@ -17,7 +17,9 @@ AMPLADA="${3:-1280}"
 ALCADA="${4:-900}"
 
 UV="${UV:-$(command -v uv || true)}"
-[ -n "$UV" ] || UV="$(ls -d "${HOME}"/.hermes/tools/uv-*/uv 2>/dev/null | head -1)"
+# El `|| true` no és decoratiu: amb `ls` sense coincidències la canalització surt amb codi 2
+# i, amb `set -e` i `pipefail`, el guió moriria aquí sense arribar a dir que falta `uv`.
+[ -n "$UV" ] || UV="$(ls -d "${HOME}"/.hermes/tools/uv-*/uv 2>/dev/null | head -1 || true)"
 [ -n "$UV" ] || { echo "cal uv (o UV=<ruta>) per instal·lar WeasyPrint" >&2; exit 1; }
 
 # El directori de cau i el de HOME poden ser de només lectura: apunta'ls a llocs escribibles.

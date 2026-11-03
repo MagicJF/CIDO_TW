@@ -6,13 +6,17 @@ Generalitat de Catalunya, que publica les convocatòries del CIDO (Diputació de
 Barcelona). Cada registre és un procés selectiu i es converteix en un tiddler:
 
   * el títol és l'id de CIDO, que surt de l'enllaç cido.diba.cat/oposicions/<id>;
-  * cada atribut de la font és un camp del tiddler (`resum`, `data_pub`,
-    `data_darrer_anunci`, `termini_presentacio`, `codi_ens`, `nom_ens`,
-    `latitud`, `longitud`, `enllac`, `font`);
+  * els camps que es copien de la font són `resum`, `data_pub`,
+    `data_darrer_anunci`, `termini_presentacio` (a la font, `termini_presentaci_`),
+    `codi_ens`, `nom_ens`, `latitud` i `longitud`, més `enllac` (l'URL del procés) i
+    `font` (l'URL del dataset);
   * el camp `caption` és un resum curt i llegible per a la interfície.
 
-El cos de cada tiddler és una transclusió de «Fitxa de procés selectiu», de
-manera que la presentació és una sola plantilla i no 800 còpies.
+La font també porta `geocoded` (les mateixes coordenades que `latitud`/`longitud`)
+i dues regions calculades internes (`:@computed_region_*`): **no s'importen**.
+
+El cos de cada tiddler és una crida a la macro `fitxa-cido`, definida a «Fitxa de
+procés selectiu», de manera que la presentació és un sol lloc i no 800 còpies.
 
 Ús:
     python3 tools/cido-import.py --wiki . --dies 7
@@ -20,8 +24,9 @@ manera que la presentació és una sola plantilla i no 800 còpies.
     python3 tools/cido-import.py --wiki . --dies 7 --purga   # re-sincronitza la finestra
 
 És idempotent: tornar-lo a executar amb les mateixes dades no canvia cap fitxer.
-No esborra mai res tret que se li demani `--purga`, i aleshores només els
-tiddlers amb l'etiqueta CIDO que ja no surten a la finestra demanada.
+No trepitja cap tiddler que no sigui de la funcionalitat, i no esborra res tret que
+se li demani `--purga` (que no es pot combinar amb `--limit` i que, abans de
+començar, exigeix que la descàrrega estigui verificada com a completa).
 """
 
 from __future__ import annotations
@@ -39,10 +44,14 @@ import urllib.request
 API = "https://analisi.transparenciacatalunya.cat/resource/a2hm-uzyj.json"
 FONT = "https://analisi.transparenciacatalunya.cat/d/a2hm-uzyj"
 USER_AGENT = "CIDO_TW-importer/1.0 (+https://github.com/MagicJF/CIDO_TW)"
-ETIQUETES = "CIDO convocatòria"
+ETIQUETA_FUNC = "CIDO"
+ETIQUETES = f"{ETIQUETA_FUNC} convocatòria"
 COS = "<<fitxa-cido>>"
 MAX_CAPTION = 90
 PAGINA = 5000
+# Els enllaços de la font són exactament aquests; no n'hi ha prou que la URL contingui
+# «/oposicions/», perquè un enllaç a un altre lloc acabaria escrit com si fos el procés.
+ENLLAC_RE = re.compile(r"^https://cido\.diba\.cat/oposicions/(\d+)$")
 
 # Camps de la font que es copien tal com vénen, en l'ordre en què s'escriuen.
 # La clau és el nom del camp al tiddler i el valor, el nom a la font.
@@ -76,8 +85,23 @@ def id_i_enllac(registre: dict) -> tuple[str, str]:
     """L'id de CIDO surt de l'enllaç; és la clau estable del procés selectiu."""
     enlla = registre.get("enlla")
     url = neteja(enlla.get("url") if isinstance(enlla, dict) else enlla)
-    trobat = re.search(r"/oposicions/(\d+)", url)
+    trobat = ENLLAC_RE.match(url)
     return (trobat.group(1) if trobat else ""), url
+
+
+def camp(text: str, nom: str) -> str:
+    """El valor d'un camp de la capçalera d'un .tid, sense confondre'l amb un camp
+    que simplement contingui el text (un `other-tags: CIDO …`, per exemple)."""
+    for linia in text.split("\n\n", 1)[0].splitlines():
+        if linia.startswith(nom + ":"):
+            return linia.split(":", 1)[1].strip()
+    return ""
+
+
+def es_cido(text: str) -> bool:
+    """Si el tiddler és de la funcionalitat, segons el camp `tags` i no una coincidència
+    de text a la capçalera."""
+    return ETIQUETA_FUNC in camp(text, "tags").split()
 
 
 def caption(resum: str, nom_ens: str) -> str:
@@ -94,9 +118,19 @@ def caption(resum: str, nom_ens: str) -> str:
     return tall.rstrip(" .,;·-—") + "…"
 
 
+def finestra(dies: int) -> str:
+    return (datetime.date.today() - datetime.timedelta(days=dies)).isoformat()
+
+
+def consulta(url: str):
+    peticio = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    with urllib.request.urlopen(peticio, timeout=90) as resposta:
+        return json.loads(resposta.read().decode("utf-8"))
+
+
 def descarrega(dies: int, limit: int = 0) -> list[dict]:
     """Els registres publicats dins la finestra, més recents primer."""
-    des_de = (datetime.date.today() - datetime.timedelta(days=dies)).isoformat()
+    des_de = finestra(dies)
     registres: list[dict] = []
     desplacament = 0
     while True:
@@ -109,10 +143,7 @@ def descarrega(dies: int, limit: int = 0) -> list[dict]:
             "$limit": min(PAGINA, limit - len(registres)) if limit else PAGINA,
             "$offset": desplacament,
         }
-        url = f"{API}?{urllib.parse.urlencode(parametres)}"
-        peticio = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-        with urllib.request.urlopen(peticio, timeout=90) as resposta:
-            pagina = json.loads(resposta.read().decode("utf-8"))
+        pagina = consulta(f"{API}?{urllib.parse.urlencode(parametres)}")
         registres.extend(pagina)
         if len(pagina) < parametres["$limit"] or (limit and len(registres) >= limit):
             break
@@ -120,15 +151,26 @@ def descarrega(dies: int, limit: int = 0) -> list[dict]:
     return registres
 
 
-def tiddler(registre: dict) -> tuple[str, str] | tuple[None, str]:
+def total_finestra(dies: int) -> int | None:
+    """Quants registres diu la font que hi ha a la finestra. Serveix per comprovar que una
+    descàrrega paginada no n'ha perdut cap abans de deixar que `--purga` esborri res."""
+    parametres = {"$select": "count(*) as n", "$where": f"data_pub > '{finestra(dies)}T00:00:00.000'"}
+    try:
+        return int(consulta(f"{API}?{urllib.parse.urlencode(parametres)}")[0]["n"])
+    except Exception as e:                                    # xarxa, format, el que sigui
+        print(f"AVIS  no s'ha pogut comptar la finestra a la font: {e}", file=sys.stderr)
+        return None
+
+
+def tiddler(registre: dict, id_cido: str, enllac: str) -> tuple[str | None, str]:
     """El .tid d'un registre, o bé (None, motiu) si no es pot convertir."""
-    id_cido, enllac = id_i_enllac(registre)
-    if not id_cido:
-        return None, "sense id de CIDO a l'enllaç"
     resum = neteja(registre.get("resum"))
     nom_ens = neteja(registre.get("nom_ens"))
-    if not resum and not nom_ens:
-        return None, "sense resum ni ens"
+    if not id_cido:
+        return None, "enllaç que no és del CIDO"
+    if not resum or not nom_ens:
+        # La fitxa i l'índex fan servir tots dos camps: mig registre no s'hi pot escriure.
+        return None, "sense resum o sense ens"
 
     camps: list[tuple[str, str]] = [
         ("title", id_cido),
@@ -145,13 +187,13 @@ def tiddler(registre: dict) -> tuple[str, str] | tuple[None, str]:
     camps.append(("font", FONT))
 
     capcalera = "\n".join(f"{nom}: {valor}" for nom, valor in camps)
-    return id_cido, f"{capcalera}\n\n{COS}\n"
+    return f"{capcalera}\n\n{COS}\n", ""
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="Importa les convocatòries de personal (CIDO) a la wiki.")
     ap.add_argument("--wiki", default=".", help="carpeta de la wiki (per defecte, l'actual)")
-    ap.add_argument("--dies", type=int, default=7, help="finestra en dies (per defecte, 7)")
+    ap.add_argument("--dies", type=int, default=7, help="finestra en dies (per defecte, 7; mínim 1)")
     ap.add_argument("--limit", type=int, default=0, help="nombre màxim de registres (0 = tots)")
     ap.add_argument("--purga", action="store_true",
                     help="esborra els tiddlers CIDO que ja no són dins la finestra demanada "
@@ -160,10 +202,15 @@ def main() -> int:
     args = ap.parse_args()
 
     # Amb --limit, la descàrrega no és la finestra sencera: purgar-hi esborraria processos
-    # que sí que hi pertanyen. Es rebutja la combinació abans de tocar cap fitxer.
+    # que sí que hi pertanyen. I amb una finestra de zero dies o negativa, la consulta no
+    # torna res i la purga esborraria TOTS els processos.
     if args.purga and args.limit:
         print("Error: --purga i --limit no poden anar junts; la purga esborraria processos "
               "que sí que són dins la finestra.", file=sys.stderr)
+        return 2
+    if args.dies < 1:
+        print("Error: --dies ha de ser 1 o més; una finestra buida faria esborrar-ho tot.",
+              file=sys.stderr)
         return 2
 
     wiki = pathlib.Path(args.wiki).resolve()
@@ -185,43 +232,71 @@ def main() -> int:
         print(f"AVIS  {len(repetits)} id(s) repetit(s) a la descàrrega (ex. {repetits[:3]}); "
               f"es queda la darrera aparició")
 
-    escrits, iguals, descartats, titols = 0, 0, [], []
+    escrits, iguals, descartats, alienes = 0, 0, [], []
+    ids_finestra: list[str] = []      # tots els ids descarregats, convertibles o no
     for registre in registres:
-        id_cido, contingut = tiddler(registre)
-        if id_cido is None:
-            descartats.append(contingut)
+        id_cido, enllac = id_i_enllac(registre)
+        if id_cido:
+            ids_finestra.append(id_cido)
+        contingut, motiu = tiddler(registre, id_cido, enllac)
+        if contingut is None:
+            descartats.append(motiu)
             continue
-        titols.append(id_cido)
         if args.dry_run:
             continue
         desti = tiddlers / f"{id_cido}.tid"
-        if desti.is_file() and desti.read_text(encoding="utf-8") == contingut:
-            iguals += 1
-            continue
+        if desti.is_file():
+            text = desti.read_text(encoding="utf-8")
+            if not es_cido(text):
+                # Un tiddler aliè amb un nom numèric: no es trepitja mai.
+                alienes.append(desti.name)
+                continue
+            if text == contingut:
+                iguals += 1
+                continue
         desti.write_text(contingut, encoding="utf-8")
         escrits += 1
 
     if args.dry_run:
-        print(f"dry-run: escriuria {len(titols)} tiddlers")
+        print(f"dry-run: escriuria {len(ids_finestra)} tiddlers")
     else:
         print(f"Tiddlers escrits: {escrits} | ja estaven igual: {iguals}")
+    if alienes:
+        print(f"AVIS  {len(alienes)} fitxer(s) amb nom de procés que no són de la funcionalitat; "
+              f"no s'han tocat ({alienes[:3]})")
     if descartats:
         print(f"Descartats: {len(descartats)} ({descartats[:3]})")
 
     if args.purga and not args.dry_run:
-        dins = set(titols)
-        fora = []
-        for fitxer in sorted(tiddlers.glob("*.tid")):
-            text = fitxer.read_text(encoding="utf-8")
-            capcalera = text.split("\n\n", 1)[0]
-            if f"tags: {ETIQUETES}" not in capcalera:
-                continue
-            if fitxer.stem in dins:
-                continue
-            fora.append(fitxer)
-            fitxer.unlink()
-        print(f"Purga: {len(fora)} tiddler(s) que ja no són a la finestra"
-              + (f" ({[f.stem for f in fora[:5]]})" if fora else ""))
+        # Abans d'esborrar res: la descàrrega ha d'estar sencera i verificada. Una pàgina
+        # pot perdre una fila si algú publica durant la descàrrega, i llavors la purga
+        # trauria del wiki un procés que sí que és dins la finestra.
+        problemes = []
+        if not ids_finestra:
+            problemes.append("la descàrrega no ha portat cap id")
+        if repetits:
+            problemes.append(f"{len(repetits)} id(s) repetit(s)")
+        total = total_finestra(args.dies)
+        if total is None:
+            problemes.append("no s'ha pogut comprovar el total de la finestra contra la font")
+        elif total != len(registres):
+            problemes.append(f"la font diu {total} registres a la finestra i se n'han "
+                             f"descarregat {len(registres)}")
+        if problemes:
+            print("AVIS  no es purga: " + "; ".join(problemes), file=sys.stderr)
+        else:
+            dins = set(ids_finestra)
+            fora = []
+            for fitxer in sorted(tiddlers.glob("*.tid")):
+                text = fitxer.read_text(encoding="utf-8")
+                if not es_cido(text):
+                    continue
+                if fitxer.stem in dins:
+                    continue
+                fora.append(fitxer)
+                fitxer.unlink()
+            print(f"Purga: {len(fora)} tiddler(s) que ja no són a la finestra"
+                  + (f" ({[f.stem for f in fora[:5]]})" if fora else ""))
 
     return 0
 

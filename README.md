@@ -16,7 +16,7 @@ tiddler dins `tiddlers/`, que és on viu tot el desenvolupament.
 ## Convocatòries de personal (CIDO)
 
 Els processos selectius publicats al CIDO (Diputació de Barcelona) entren a la wiki amb un
-tiddler per procés: el títol és l'id de CIDO i cada atribut de la font és un camp. La font és
+tiddler per procés: el títol és l'id de CIDO i els camps són els de la font. La font és
 el dataset
 [Convocatòries de Personal](https://analisi.transparenciacatalunya.cat/d/a2hm-uzyj) del portal
 de dades obertes de la Generalitat de Catalunya.
@@ -31,8 +31,11 @@ L'importador és idempotent: tornar-lo a executar amb les mateixes dades no toca
 No esborra res si no se li demana `--purga`.
 
 Camps de cada tiddler: `title` (id de CIDO), `caption` (títol curt per a la interfície),
-`tags` (`CIDO convocatòria`), `resum`, `data_pub`, `data_darrer_anunci`,
-`termini_presentacio`, `codi_ens`, `nom_ens`, `latitud`, `longitud`, `enllac` i `font`.
+`tags` (`CIDO convocatòria`) i, de la font, `resum`, `data_pub`, `data_darrer_anunci`,
+`termini_presentacio` (a la font, `termini_presentaci_`), `codi_ens`, `nom_ens`, `latitud` i
+`longitud`, més `enllac` (l'URL del procés) i `font` (l'URL del dataset). La font també porta
+`geocoded`, que és les mateixes coordenades, i dues regions calculades internes
+(`:@computed_region_*`): **no s'importen**.
 
 La fitxa que es veu al cos de cada procés surt d'una sola macro, `fitxa-cido`, definida a
 [[Fitxa de procés selectiu]] i etiquetada `$:/tags/Macro`; l'índex és

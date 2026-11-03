@@ -192,8 +192,10 @@ for t, c in cido.items():
         malament.append(f"{t}: sense pàgina"); continue
     raw = p.read_text(encoding="utf-8")
     problemes = []
-    for etiqueta, esperat in (("Resum", c["resum"]), ("Ens", c["nom_ens"]),
-                              ("Publicació", c["data_pub"])):
+    # Els valors amb `.get`: un tiddler amb un forat ja el denuncia la comprovació 4, i
+    # aquesta ha de poder dir-ho sense petar amb un KeyError a mig camí.
+    for etiqueta, esperat in (("Resum", c.get("resum", "")), ("Ens", c.get("nom_ens", "")),
+                              ("Publicació", c.get("data_pub", ""))):
         valor = cela(raw, etiqueta)
         if valor is None:
             problemes.append(f"sense la fila «{etiqueta}»")
@@ -202,12 +204,12 @@ for t, c in cido.items():
     enllac = cela(raw, "Enllaç")
     if enllac is None:
         problemes.append("sense la fila «Enllaç»")
-    elif f'href="{c["enllac"]}"' not in enllac:
+    elif not c.get("enllac") or f'href="{c["enllac"]}"' not in enllac:
         problemes.append("«Enllaç» sense l'enllaç del procés")
     h1 = re.search(r'<div class="tc-tiddler-body[^"]*">\s*<h1[^>]*>(.*?)</h1>', raw, re.S)
     if not h1:
         problemes.append("sense encapçalament al cos")
-    elif html.unescape(re.sub(r"<[^>]+>", "", h1.group(1))).strip() != c["caption"]:
+    elif html.unescape(re.sub(r"<[^>]+>", "", h1.group(1))).strip() != c.get("caption", ""):
         problemes.append("encapçalament que no és el caption del procés")
     if problemes:
         malament.append(f"{t}: {', '.join(problemes)}")

@@ -2,13 +2,19 @@
 #
 # Els tiddlers de dades són contingut generat per tools/cido-import.py: centenars de
 # fitxers amb la mateixa forma, que fan que CodeRabbit no revisi res de res
-# («Review skipped: 802 files exceed the limit of 100»). El que s'ha de revisar és el
-# codi que els genera i les proves que els comproven, i això és el que queda dins.
+# («Review skipped: 802 files exceed the limit of 100»). Fora de la revisió només hi
+# queden aquests fitxers de dades, que es reconeixen pel nom: el títol d'un procés és
+# el seu id numèric. La resta de tiddlers (índex, plantilla, $__DefaultTiddlers) es
+# manté a mà i ha de passar per la revisió com qualsevol altre fitxer.
 reviews:
   path_filters:
-    - "!tiddlers/*.tid"
+    - "!tiddlers/[0-9]*.tid"
     - "!output/**"
   path_instructions:
+    - path: "tiddlers/**"
+      instructions: >-
+        Contingut de la wiki en wikitext. Els tiddlers amb nom numèric són dades
+        generades per tools/cido-import.py i no es revisen; la resta es manté a mà.
     - path: "tools/**"
       instructions: >-
         Eines del repositori. cido-import.py baixa d'una font de dades oberta

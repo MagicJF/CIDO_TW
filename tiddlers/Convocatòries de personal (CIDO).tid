@@ -6,9 +6,10 @@ Processos selectius publicats al CIDO (Diputació de Barcelona), recollits de la
 <$link to="https://analisi.transparenciacatalunya.cat/d/a2hm-uzyj">Convocatòries de Personal</$link>
 del portal de dades obertes de la Generalitat de Catalunya.
 
-Un tiddler per procés selectiu: el títol és l'id de CIDO i cada atribut de la font és un camp
-del tiddler. La presentació d'una fitxa és la plantilla [[Fitxa de procés selectiu]], no un text
-copiat a cada registre.
+Un tiddler per procés selectiu: el títol és l'id de CIDO i els camps són els de la font
+(`resum`, `data_pub`, `termini_presentacio`, `nom_ens`, `codi_ens`, `latitud`, `longitud`,
+`enllac`, `font`). La presentació d'una fitxa és la plantilla [[Fitxa de procés selectiu]], no
+un text copiat a cada registre.
 
 Són <$text text={{{ [tag[CIDO]count[]] }}}/> processos, els publicats els darrers set dies.
 
