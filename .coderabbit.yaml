@@ -3,18 +3,29 @@
 # Els tiddlers de dades són contingut generat per tools/cido-import.py: centenars de
 # fitxers amb la mateixa forma, que fan que CodeRabbit no revisi res de res
 # («Review skipped: 802 files exceed the limit of 100»). Fora de la revisió només hi
-# queden aquests fitxers de dades, que es reconeixen pel nom: el títol d'un procés és
-# el seu id numèric. La resta de tiddlers (índex, plantilla, $__DefaultTiddlers) es
-# manté a mà i ha de passar per la revisió com qualsevol altre fitxer.
+# queden aquests fitxers de dades, que es reconeixen pel nom: el títol d'un procés és el
+# seu id de CIDO, **tot xifres**. Un patró com `tiddlers/[0-9]*.tid` no serveix, perquè
+# també trauria de la revisió un tiddler mantingut a mà com `2026-objectius.tid`; per
+# això hi ha un patró per cada llargada d'id possible (de 3 a 10 xifres) i cap nom amb
+# lletres o guions hi encaixa. La resta de tiddlers (índex, plantilla,
+# $__DefaultTiddlers) es manté a mà i ha de passar per la revisió com qualsevol fitxer.
 reviews:
   path_filters:
-    - "!tiddlers/[0-9]*.tid"
+    - "!tiddlers/[0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
     - "!output/**"
   path_instructions:
     - path: "tiddlers/**"
       instructions: >-
-        Contingut de la wiki en wikitext. Els tiddlers amb nom numèric són dades
-        generades per tools/cido-import.py i no es revisen; la resta es manté a mà.
+        Contingut de la wiki en wikitext. Els tiddlers amb un nom tot de xifres són
+        dades generades per tools/cido-import.py i no es revisen; la resta es manté a
+        mà i sí que s'ha de revisar.
     - path: "tools/**"
       instructions: >-
         Eines del repositori. cido-import.py baixa d'una font de dades oberta
