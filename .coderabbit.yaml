@@ -1,0 +1,21 @@
+# Configuració de CodeRabbit per a aquesta wiki.
+#
+# Els tiddlers de dades són contingut generat per tools/cido-import.py: centenars de
+# fitxers amb la mateixa forma, que fan que CodeRabbit no revisi res de res
+# («Review skipped: 802 files exceed the limit of 100»). El que s'ha de revisar és el
+# codi que els genera i les proves que els comproven, i això és el que queda dins.
+reviews:
+  path_filters:
+    - "!tiddlers/*.tid"
+    - "!output/**"
+  path_instructions:
+    - path: "tools/**"
+      instructions: >-
+        Eines del repositori. cido-import.py baixa d'una font de dades oberta
+        (Socrata / portal de dades obertes de la Generalitat) i escriu els tiddlers
+        de dades; ha de ser idempotent i no ha d'esborrar res sense una ordre
+        explícita.
+    - path: "proves/**"
+      instructions: >-
+        Proves de comportament contra el build estàtic de TiddlyWiki. Han de saber
+        dir no: cada comprovació ha de tenir un trencament que la faci fallar.
