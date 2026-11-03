@@ -1,0 +1,9 @@
+title: Benvinguda
+tags: inici
+
+! CIDO_TW
+
+Instància de TiddlyWiki d'aquest repositori. Tot el desenvolupament de contingut viu a
+`tiddlers/`, un fitxer `.tid` per concepte.
+
+El vocabulari d'etiquetes és a `tags.txt` i les proves de punta a punta, a `proves/`.
