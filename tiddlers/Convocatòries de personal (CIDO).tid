@@ -1,0 +1,27 @@
+title: Convocatòries de personal (CIDO)
+
+! Convocatòries de personal (CIDO)
+
+Processos selectius publicats al CIDO (Diputació de Barcelona), recollits de la font oberta
+<$link to="https://analisi.transparenciacatalunya.cat/d/a2hm-uzyj">Convocatòries de Personal</$link>
+del portal de dades obertes de la Generalitat de Catalunya.
+
+Un tiddler per procés selectiu: el títol és l'id de CIDO i els camps són els de la font
+(`resum`, `data_pub`, `data_darrer_anunci`, `termini_presentacio`, `nom_ens`, `codi_ens`,
+`latitud`, `longitud`, `enllac`, `font`). La presentació d'una fitxa és la plantilla
+[[Fitxa de procés selectiu]], no un text copiat a cada registre.
+
+Són <$text text={{{ [tag[CIDO]count[]] }}}/> processos, els publicats els darrers set dies.
+
+!! Com refrescar-ho
+
+$$$bash
+python3 tools/cido-import.py --wiki . --dies 7 --purga
+$$$
+
+!! Llistat
+
+<table>
+<tr><th>Publicat</th><th>Procés</th><th>Ens</th><th>Termini</th></tr>
+<$list filter="[tag[CIDO]!sort[data_pub]]"><tr><td>{{!!data_pub}}</td><td><$link to={{!!title}}>{{!!caption}}</$link></td><td>{{!!nom_ens}}</td><td>{{!!termini_presentacio}}</td></tr></$list>
+</table>

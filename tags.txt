@@ -1,3 +1,7 @@
 # Vocabulari d'etiquetes d'aquesta wiki. Una línia per etiqueta.
 # Una etiqueta nova s'afegeix aquí abans de fer-la servir als tiddlers.
 inici
+plantilla
+CIDO
+convocatòria
+$:/tags/Macro
