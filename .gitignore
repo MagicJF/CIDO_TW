@@ -1,3 +1,5 @@
 output/
 $__StoryList.tid
 *.log
+__pycache__/
+*.pyc
