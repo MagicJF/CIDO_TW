@@ -27,6 +27,7 @@ tiddlers amb l'etiqueta CIDO que ja no surten a la finestra demanada.
 from __future__ import annotations
 
 import argparse
+import collections
 import datetime
 import json
 import pathlib
@@ -101,7 +102,10 @@ def descarrega(dies: int, limit: int = 0) -> list[dict]:
     while True:
         parametres = {
             "$where": f"data_pub > '{des_de}T00:00:00.000'",
-            "$order": "data_pub DESC",
+            # `:id` és l'identificador únic de fila de Socrata: sense un segon criteri únic,
+            # les files empatades a `data_pub` poden canviar de lloc entre pàgines i una
+            # descàrrega paginada en deixa o en repeteix.
+            "$order": "data_pub DESC,:id DESC",
             "$limit": min(PAGINA, limit - len(registres)) if limit else PAGINA,
             "$offset": desplacament,
         }
@@ -150,9 +154,17 @@ def main() -> int:
     ap.add_argument("--dies", type=int, default=7, help="finestra en dies (per defecte, 7)")
     ap.add_argument("--limit", type=int, default=0, help="nombre màxim de registres (0 = tots)")
     ap.add_argument("--purga", action="store_true",
-                    help="esborra els tiddlers CIDO que ja no són dins la finestra demanada")
+                    help="esborra els tiddlers CIDO que ja no són dins la finestra demanada "
+                         "(no es pot combinar amb --limit)")
     ap.add_argument("--dry-run", action="store_true", help="no escriu res; només informa")
     args = ap.parse_args()
+
+    # Amb --limit, la descàrrega no és la finestra sencera: purgar-hi esborraria processos
+    # que sí que hi pertanyen. Es rebutja la combinació abans de tocar cap fitxer.
+    if args.purga and args.limit:
+        print("Error: --purga i --limit no poden anar junts; la purga esborraria processos "
+              "que sí que són dins la finestra.", file=sys.stderr)
+        return 2
 
     wiki = pathlib.Path(args.wiki).resolve()
     tiddlers = wiki / "tiddlers"
@@ -164,6 +176,14 @@ def main() -> int:
     print(f"Finestra: {args.dies} dia(es) enrere des d'avui ({datetime.date.today().isoformat()})")
     registres = descarrega(args.dies, args.limit)
     print(f"Registres a la font: {len(registres)}")
+
+    # Un id repetit vol dir que la descàrrega paginada ha perdut el fil (o que la font ha
+    # canviat a mig camí): val més dir-ho que escriure un tiddler damunt d'un altre.
+    comptes = collections.Counter(id_i_enllac(r)[0] for r in registres)
+    repetits = [i for i, n in comptes.items() if n > 1 and i]
+    if repetits:
+        print(f"AVIS  {len(repetits)} id(s) repetit(s) a la descàrrega (ex. {repetits[:3]}); "
+              f"es queda la darrera aparició")
 
     escrits, iguals, descartats, titols = 0, 0, [], []
     for registre in registres:

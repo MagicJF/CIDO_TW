@@ -25,11 +25,18 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-/tmp/uvcache}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-/tmp/fccache}"
 export TID_RENDER_MIDA="${AMPLADA}x${ALCADA}"
 
-# WeasyPrint necessita libpangoft2. Si al sistema no hi és, es pot extreure d'un .deb de
-# Debian sense root i apuntar-hi aquí:
+# WeasyPrint necessita libpangoft2. Al contenidor on l'usuari té sudo, el camí curt és
+# `sudo -n apt-get install -y libpangoft2-1.0-0`. Sense root es pot extreure d'un .deb i
+# apuntar-hi EXPLÍCITAMENT amb TW_LIBDIR:
 #   curl -sSo p.deb http://deb.debian.org/debian/pool/main/p/pango1.0/libpangoft2-1.0-0_<v>_amd64.deb
-#   mkdir -p /tmp/deblibs && dpkg-deb -x p.deb /tmp/deblibs
-[ -d /tmp/deblibs/usr/lib/x86_64-linux-gnu ] && \
-  export LD_LIBRARY_PATH="/tmp/deblibs/usr/lib/x86_64-linux-gnu${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+#   mkdir -p ~/deblibs && dpkg-deb -x p.deb ~/deblibs
+#   TW_LIBDIR=$HOME/deblibs/usr/lib/x86_64-linux-gnu bash renderize.sh ...
+# No s'accepta cap camí implícit de /tmp: en una carpeta compartida i escribible, qualsevol
+# altre usuari de la màquina podria plantar-hi una biblioteca i el render l'executaria amb els
+# permisos de qui el crida.
+if [ -n "${TW_LIBDIR:-}" ]; then
+  [ -d "$TW_LIBDIR" ] || { echo "TW_LIBDIR no és una carpeta: $TW_LIBDIR" >&2; exit 2; }
+  export LD_LIBRARY_PATH="$TW_LIBDIR${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+fi
 
 exec "$UV" run --quiet --with weasyprint --with pymupdf python "$(dirname "$0")/renderize.py" "$1" "$2"

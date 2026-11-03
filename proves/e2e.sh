@@ -11,7 +11,8 @@
 #      l'enllaç concorda amb el títol
 #   5. l'índex llista TOTS els processos, com a enllaços de debò i amb el caption
 #      com a text, i el compte que declara és el que hi ha
-#   6. cada fitxa renderitza les dades del SEU procés (no les d'un altre ni buides)
+#   6. cada fitxa renderitza les dades del SEU procés, cel·la a cel·la (no el text
+#      sencer de la pàgina, que ja porta el caption amb el resum i l'ens)
 #
 # Trenca qualsevol de les sis i ha de sortir vermella. Un vermell per mecanisme.
 #
@@ -177,25 +178,43 @@ else:
         ok("l'índex no conté 'Missing tiddler'")
 
 # --- 6. cada fitxa renderitza les dades del seu procés --------------------------
-buides, equivocades = [], []
+# Cel·la a cel·la, i no buscant el valor «en algun lloc de la pàgina»: l'encapçalament del
+# cos ja porta el caption, que conté el resum i l'ens, així que una taula buida passaria
+# verda si només es mira el text de tota la pàgina.
+def cela(raw, etiqueta):
+    m = re.search(r"<tr[^>]*>\s*<td>%s</td>\s*<td>(.*?)</td>\s*</tr>" % re.escape(etiqueta), raw, re.S)
+    return m.group(1) if m else None
+
+malament = []
 for t, c in cido.items():
     p = pagina(t)
     if not p.is_file():
-        continue
+        malament.append(f"{t}: sense pàgina"); continue
     raw = p.read_text(encoding="utf-8")
-    cos = text(raw)
-    if c["resum"] not in cos and c["nom_ens"] not in cos:
-        buides.append(t)
-    elif c["enllac"] not in raw:
-        equivocades.append(t)
-if buides:
-    bad(f"{len(buides)} fitxa(es) sense les dades del procés (ex. {buides[:3]})")
+    problemes = []
+    for etiqueta, esperat in (("Resum", c["resum"]), ("Ens", c["nom_ens"]),
+                              ("Publicació", c["data_pub"])):
+        valor = cela(raw, etiqueta)
+        if valor is None:
+            problemes.append(f"sense la fila «{etiqueta}»")
+        elif html.unescape(re.sub(r"<[^>]+>", "", valor)).strip() != esperat:
+            problemes.append(f"«{etiqueta}» amb un altre valor")
+    enllac = cela(raw, "Enllaç")
+    if enllac is None:
+        problemes.append("sense la fila «Enllaç»")
+    elif f'href="{c["enllac"]}"' not in enllac:
+        problemes.append("«Enllaç» sense l'enllaç del procés")
+    h1 = re.search(r'<div class="tc-tiddler-body[^"]*">\s*<h1[^>]*>(.*?)</h1>', raw, re.S)
+    if not h1:
+        problemes.append("sense encapçalament al cos")
+    elif html.unescape(re.sub(r"<[^>]+>", "", h1.group(1))).strip() != c["caption"]:
+        problemes.append("encapçalament que no és el caption del procés")
+    if problemes:
+        malament.append(f"{t}: {', '.join(problemes)}")
+if malament:
+    bad(f"{len(malament)} fitxa(es) sense les dades del seu procés (ex. {malament[:3]})")
 else:
-    ok(f"{len(cido)} fitxes renderitzen el resum i l'ens del seu procés")
-if equivocades:
-    bad(f"{len(equivocades)} fitxa(es) sense l'enllaç del procés (ex. {equivocades[:3]})")
-else:
-    ok("cada fitxa porta l'enllaç del seu procés")
+    ok(f"{len(cido)} fitxes amb el resum, l'ens, la publicació, l'enllaç i el caption del seu procés")
 
 print()
 print(f"RESULTAT: {len(fallades)} fallada(es)." if fallades else "RESULTAT: funcionalitat verificada.")
