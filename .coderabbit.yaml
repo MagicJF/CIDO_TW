@@ -2,33 +2,47 @@
 #
 # Els tiddlers de convocatòries són contingut generat per la sincronització del feed:
 # centenars de fitxers amb la mateixa forma, que fan que CodeRabbit no revisi res de res
-# («Review skipped: N files exceed the limit of 100»). Fora de la revisió només hi queden
-# aquests fitxers, que es reconeixen pel nom: el títol d'una convocatòria és el seu
-# `identificador` de la font, vuit xifres i una `O` seguida del número (20260212O24).
+# («Review skipped: N files exceed the limit of 100»). El límit compta TOTS els fitxers
+# que canvien al PR, i les supressions també: aquest PR esborra el corpus anterior (793
+# fitxers amb nom tot de xifres) i n'afegeix 302 de nous, així que calen els dos jocs de
+# patrons. Fora de la revisió només hi queden aquests fitxers de dades; els tiddlers que es
+# mantenen a mà (tauler, vistes, plantilla, diccionari) han de passar per la revisió.
+#
 # Un patró com `tiddlers/[0-9]*.tid` no serveix, perquè també trauria de la revisió un
-# tiddler mantingut a mà com `2026-objectius.tid`; el patró de sota exigeix les vuit
-# xifres i la `O`, i cap nom mantingut hi encaixa (comprovat amb fnmatch sobre el repo:
-# 302 de 302 generats queden fora de la revisió i cap dels mantinguts hi cau).
+# tiddler mantingut a mà com `2026-objectius.tid`. Per això:
+#   * les convocatòries del feed es reconeixen pel nom: el títol és l'`identificador` de la
+#     font, vuit xifres i una `O` seguida del número (20260212O24);
+#   * el corpus anterior tenia el títol tot de xifres, i per això hi ha un patró per cada
+#     llargada possible (de 3 a 10), que cap nom amb lletres o guions no encaixa.
+# Comprovat amb fnmatch sobre el repo: 302 de 302 generats i els 793 esborrats queden fora,
+# i cap dels mantinguts hi cau.
 reviews:
   path_filters:
     - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]O*.tid"
+    - "!tiddlers/[0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
+    - "!tiddlers/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9].tid"
     - "!output/**"
   path_instructions:
     - path: "tiddlers/**"
       instructions: >-
         Contingut de la wiki en wikitext. Els tiddlers amb nom d'identificador de
-        convocatòria (vuit xifres i una O) són dades generades per la sincronització del
-        feed i no es revisen; la resta (tauler, vistes, plantilla, diccionari) es manté a
-        mà i sí que s'ha de revisar.
+        convocatòria (vuit xifres i una O) i els del corpus anterior (tot xifres) són dades
+        generades i no es revisen; la resta (tauler, vistes, plantilla, diccionari) es manté
+        a mà i sí que s'ha de revisar.
     - path: "plugins/**"
       instructions: >-
-        Connector de TiddlyWiki per a node. Ha de funcionar tant amb l'ordre de consola
-        com amb la ruta HTTP, compartir la mateixa lògica, ser idempotent (sense marques
-        de temps), no esborrar mai cap tiddler i no trepitjar els camps que escriu la
-        persona (estat, notes). Res de `require` de node a nivell de mòdul: el connector
-        viatja dins de la wiki i també es carrega al navegador.
+        Connector de TiddlyWiki per a node. Ha de funcionar tant amb l'ordre de consola com
+        amb la ruta HTTP, compartir la mateixa lògica, ser idempotent (sense marques de
+        temps), no esborrar mai cap tiddler i no trepitjar els camps que escriu la persona
+        (estat, notes). Res de `require` de node a nivell de mòdul: el connector viatja dins
+        de la wiki i també es carrega al navegador.
     - path: "proves/**"
       instructions: >-
-        Proves de comportament contra el build estàtic de TiddlyWiki i contra la ruta
-        HTTP. Han de saber dir no: cada comprovació ha de tenir un trencament que la faci
-        fallar.
+        Proves de comportament contra el build estàtic de TiddlyWiki i contra la ruta HTTP.
+        Han de saber dir no: cada comprovació ha de tenir un trencament que la faci fallar.

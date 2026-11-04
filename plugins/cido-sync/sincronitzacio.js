@@ -33,7 +33,12 @@ function colapsa(v) {
 	return v === undefined ? "" : desescapaHtml(v.replace(/\s+/g, " ").trim());
 }
 
-/* Parser CSV segons RFC 4180: cometes dobles, camps entre cometes amb comes i salts. */
+/*
+Parser CSV segons RFC 4180: cometes dobles, camps entre cometes amb comes i salts.
+Torna les files i si el text s'ha acabat amb un camp entre cometes sense tancar: un CSV
+tallat a mig escriure no es pot interpretar, perquè les files que hi falten passarien a
+formar part de l'últim camp.
+*/
 exports.parsejaCsv = function(text) {
 	var files = [], fila = [], camp = "", dinsCometes = false, i = 0, c;
 	while(i < text.length) {
@@ -52,7 +57,7 @@ exports.parsejaCsv = function(text) {
 		camp += c; i++;
 	}
 	if(camp !== "" || fila.length > 0) { fila.push(camp); files.push(fila); }
-	return files;
+	return {files: files, tallat: dinsCometes};
 };
 
 /* "Tue, 03 Nov 2026" → "2026-11-03" (i "" si no encaixa). */
@@ -105,7 +110,11 @@ camps canviats de lloc. Una fila amb menys cel·les sí que es desa, però amb e
 final buits i un avís, perquè pot voler dir que la font ha canviat.
 */
 exports.llegeixCsv = function(text) {
-	var files = exports.parsejaCsv(text), registres = [], avisos = [], errors = [], capsalera = [];
+	var llegit = exports.parsejaCsv(text), files = llegit.files, registres = [], avisos = [], errors = [], capsalera = [];
+	if(llegit.tallat) {
+		errors.push("El fitxer s'acaba amb un camp entre cometes sense tancar: sembla tallat a mig escriure. No s'ha tocat res.");
+		return {capsalera: capsalera, registres: registres, avisos: avisos, errors: errors, tallat: true};
+	}
 	if(files.length > 0) { capsalera = files[0].map(colapsa); }
 	for(var f = 1; f < files.length; f++) {
 		var fila = files[f];
@@ -125,7 +134,7 @@ exports.llegeixCsv = function(text) {
 		}
 		registres.push(registre);
 	}
-	return {capsalera: capsalera, registres: registres, avisos: avisos, errors: errors};
+	return {capsalera: capsalera, registres: registres, avisos: avisos, errors: errors, tallat: false};
 };
 
 /* El tiddler d'un registre. `existent` és el tiddler que ja hi ha amb aquell títol, si n'hi ha. */
@@ -207,6 +216,11 @@ exports.sincronitza = function(wiki, opcions) {
 		return resum;
 	}
 	var dades = exports.llegeixCsv(fs.readFileSync(fitxer, "utf8"));
+	if(dades.tallat) {
+		// Un CSV a mitges no es pot interpretar: val més no tocar res i dir-ho.
+		resum.errors = dades.errors.slice(0);
+		return resum;
+	}
 	resum.files = dades.registres.length;
 	resum.avisos = dades.avisos.slice(0);
 	resum.errors = dades.errors.slice(0);

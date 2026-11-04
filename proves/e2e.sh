@@ -53,6 +53,33 @@ else
 	bad "no s'ha dit que hi hagi files que no encaixen"; sed 's/^/      /' "${TMP}/sincro-1.err"
 fi
 
+echo "== 1b. un CSV tallat no toca res =="
+python3 - "${TMP}/wiki" "$TW" <<'PY'
+import hashlib, pathlib, subprocess, sys
+wiki = pathlib.Path(sys.argv[1])
+csv = wiki / "cido_24h.csv"
+bona = csv.read_text(encoding="utf-8")
+def h():
+    return {f.name: hashlib.sha256(f.read_bytes()).hexdigest() for f in (wiki / "tiddlers").glob("*.tid")}
+abans = h()
+# Talla el fitxer a mig camp entre cometes, com quedaria una descàrrega interrompuda.
+csv.write_text(bona[:int(len(bona) * 0.6)].rsplit("\r\n", 1)[0] + '\r\n"camp sense tancar', encoding="utf-8")
+r = subprocess.run([sys.argv[2], str(wiki), "--cido-sincronitza"], capture_output=True, text=True)
+csv.write_text(bona, encoding="utf-8")
+despres = h()
+salta = lambda k: k.startswith("Estat de la sincronitzacio")
+canviats = [k for k in despres if abans.get(k) != despres[k] and not salta(k)]
+if "Convocatòries: 0" not in r.stdout:
+    print(f"FAIL  amb un CSV tallat hauria de no desar cap convocatòria: {r.stdout.strip()!r}"); sys.exit(1)
+if "cometes sense tancar" not in r.stderr:
+    print(f"FAIL  amb un CSV tallat ho hauria de dir: {r.stderr.strip()!r}"); sys.exit(1)
+if canviats:
+    print(f"FAIL  amb un CSV tallat ha tocat fitxers: {canviats}"); sys.exit(1)
+print("PASS  un CSV tallat a mig camp entre cometes no desa res, ho diu i no toca cap fitxer")
+sys.exit(0)
+PY
+[ $? -eq 0 ] || FAILS=$((FAILS+1))
+
 echo "== 2. contracte de dades dels tiddlers creats =="
 python3 - "${TMP}/wiki" <<'PY'
 import pathlib, re, sys
