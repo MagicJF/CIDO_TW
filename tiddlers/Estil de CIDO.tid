@@ -1,0 +1,26 @@
+title: Estil de CIDO
+tags: $:/tags/Stylesheet
+type: text/css
+
+/* Estil propi del feed de convocatòries. */
+.cidotaula { border-collapse: collapse; width: 100%; }
+.cidotaula th { text-align: left; border-bottom: 2px solid #ccc; padding: .3em .5em; }
+.cidotaula td { border-bottom: 1px solid #eee; padding: .3em .5em; vertical-align: top; }
+.cidotaula tr:hover td { background: #f7f7f7; }
+.cidogrup { margin-top: 1.4em; border-bottom: 1px solid #ddd; }
+.cidoboto { margin-right: .3em; padding: .15em .6em; border: 1px solid #bbb; border-radius: .5em;
+  background: #fafafa; cursor: pointer; font-size: .9em; }
+.cidoboto:hover { background: #eee; }
+.cidoboto-actiu { border-color: #444; background: #444; color: #fff; }
+.cidoboto-actiu:hover { background: #333; }
+.tcboto-cido { display: inline-block; padding: .4em 1em; border-radius: .5em;
+  background: #2b6cb0; color: #fff !important; text-decoration: none; font-weight: 600; }
+.tcboto-cido:hover { background: #24598f; }
+.cidocerca { padding: .3em .5em; width: 60%; }
+.cidonotes { width: 100%; min-height: 4em; margin-top: .3em; }
+.cidomarca { font-weight: 600; }
+.cidopill { display: inline-block; padding: 0 .5em; border-radius: .6em; background: #eef2f7;
+  border: 1px solid #ccd6e0; font-size: .85em; margin-right: .3em; }
+.cidofont { color: #777; font-size: .85em; }
+.cidofitxa td:first-child { color: #555; white-space: nowrap; padding-right: 1em; }
+

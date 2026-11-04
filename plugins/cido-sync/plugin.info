@@ -1,0 +1,10 @@
+{
+    "title": "$:/plugins/cido-sync",
+    "name": "Sincronització CIDO",
+    "description": "Llegeix cido_24h.csv i actualitza o crea els tiddlers de convocatòries. Dues portes: la ruta GET /cido/sincronitza (el botó de la wiki) i l'ordre de consola --cido-sincronitza.",
+    "author": "Hermes Agent",
+    "version": "1.0.0",
+    "core-version": ">=5.3.0",
+    "plugin-type": "plugin",
+    "type": "application/json"
+}

@@ -1,0 +1,27 @@
+acces_al_tramit: seleccio@csapg.cat
+canal_origen: obertes
+caption: 1 plaça de Farmacèutic · Consorci Sanitari de l'Alt Penedès i Garraf
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|web_de_l_ens_convocant|enllacos_documents|resum_rss|tots_els_canals|url
+data_pub: 2026-11-02
+data_publicacio: Mon, 02 Nov 2026
+enllacos_documents: https://www.csapg.cat/media/upload/pdf/FARMA_CSAPG_26_1793606420.pdf
+ens: Consorci Sanitari de l'Alt Penedès i Garraf
+expedient: FARMA_2026
+finalitzacio_de_presentacio_de_sollicituds: 17/11/2026 - Data orientativa; si teniu algun dubte, consulteu l'ens convocant / Obert fins a trobar la persona candidata adequada
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: A - Grau universitari
+identificador: 20261102O74
+materies: Farmàcia
+organisme: Ens Local / Catalunya
+placa: 1 plaça de Farmacèutic
+resum_rss: Número de referència: 20261102O74 Data de publicació: 02/11/2026 20:22:00 Ens: Consorci Sanitari de l'Alt Penedès i Garraf
+sistema_de_seleccio: Concurs o valoració de mèrits
+tags: CIDO convocatòria
+tipus_de_personal: Laboral
+title: 20261102O74
+titulacio_requerida: Grau de farmàcia. Acreditació de l'especialitat de farmàcia hospitalària o acreditació d'estar cursant l'últim any de resident
+tots_els_canals: convocades-sistema-concurs | obertes | oposicions
+url: http://cido.diba.cat/oposicions/22426588/1-placa-de-farmaceutic-consorci-sanitari-de-lalt-penedes-i-garraf
+web_de_l_ens_convocant: https://www.csapg.cat/professionals/treballa-amb-nosaltres/ofertes-de-treball/
+
+<<fitxa-cido>>

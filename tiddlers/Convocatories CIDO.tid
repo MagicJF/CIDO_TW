@@ -1,0 +1,32 @@
+title: Convocatòries CIDO
+tags: vista
+
+! Convocatòries de personal (CIDO)
+
+Un tiddler per convocatòria, amb totes les columnes del feed com a camps. El títol és
+l'identificador de la font; la resta és a [[Camps de les convocatòries]].
+
+!! Cerca
+
+<$edit-text tiddler="$:/state/cerca-cido" field="text" default="" tag="input" placeholder="ens, matèria, placa, expedient…" class="cidocerca" />
+
+Són <strong><$text text={{{ [tag[CIDO]count[]] }}}/></strong> convocatòries.
+
+<table class="cidotaula">
+<tr><th>Publicat</th><th>Convocatòria</th><th>Ens</th><th>Grup</th><th>Termini</th><th>Marca</th></tr>
+<$list filter="[tag[CIDO]search:placa,materies,ens,organisme,identificador,expedient,titulacio_requerida{$:/state/cerca-cido##text}!sort[data_pub]sort[ens]]" emptyMessage="Cap convocatòria coincideix amb la cerca.">
+<tr>
+<td><$text text={{{ [<currentTiddler>get[data_pub]] }}}/></td>
+<td><$link to={{!!title}}><$text text={{{ [<currentTiddler>get[caption]] }}}/></$link></td>
+<td><$text text={{{ [<currentTiddler>get[ens]] }}}/></td>
+<td><$text text={{{ [<currentTiddler>get[grup_de_titulacio_o_assimilat]split[ ]first[]] }}}/></td>
+<td><$text text={{{ [<currentTiddler>get[termini]] }}}/></td>
+<td><$list filter="[<currentTiddler>has[estat]]" variable="marca"><$text text={{{ [<currentTiddler>get[estat]] }}}/></$list></td>
+</tr>
+</$list>
+</table>
+
+!! Per on seguir
+
+<<list-links "[tag[vista]sort[title]]">>
+

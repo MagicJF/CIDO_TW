@@ -2,6 +2,8 @@
 # Una etiqueta nova s'afegeix aquí abans de fer-la servir als tiddlers.
 inici
 plantilla
+vista
 CIDO
 convocatòria
 $:/tags/Macro
+$:/tags/Stylesheet

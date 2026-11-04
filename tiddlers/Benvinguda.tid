@@ -1,9 +1,10 @@
 title: Benvinguda
 tags: inici
 
-! CIDO_TW
+! Benvinguda
 
-Instància de TiddlyWiki d'aquest repositori. Tot el desenvolupament de contingut viu a
-`tiddlers/`, un fitxer `.tid` per concepte.
+Aquesta és la wiki de convocatòries de personal del CIDO. Comença pel [[Tauler CIDO]].
 
-El vocabulari d'etiquetes és a `tags.txt` i les proves de punta a punta, a `proves/`.
+El contingut són tiddlers: un fitxer `.tid` per concepte dins `tiddlers/`. El vocabulari
+d'etiquetes és a `tags.txt` i les proves de punta a punta, a `proves/`.
+

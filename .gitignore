@@ -1,3 +1,10 @@
 output/
 $__StoryList.tid
 *.log
+
+# El CSV del dia i el col·lector que el genera viuen fora del repositori: el que es
+# publica són els tiddlers. L'estat de la darrera sincronització tampoc no s'hi publica,
+# perquè porta una marca de temps que canvia a cada execució.
+cido_24h.csv
+cido_24h_futureproof.py
+Estat de la sincronitzacio.tid

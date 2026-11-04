@@ -1,0 +1,47 @@
+title: Tauler CIDO
+tags: inici vista
+
+! Convocatòries de personal del CIDO
+
+Cada convocatòria és un tiddler: el títol és l'`identificador` de la font i cada columna del
+CSV és un camp. Aquesta wiki és el lloc per navegar-les, filtrar-les i seguir-les.
+
+{{Sincronització del feed}}
+
+!! Què hi ha ara
+
+|!Què|!Quant|h
+|Convocatòries|<$text text={{{ [tag[CIDO]count[]] }}}/>|
+|Obertes|<$text text={{{ [tag[CIDO]get[tots_els_canals]split[|]trim[]match[obertes]count[]] }}}/>|
+|Borses de treball|<$text text={{{ [tag[CIDO]get[tots_els_canals]split[|]trim[]match[borses-treball]count[]] }}}/>|
+|Places d'interinatge|<$text text={{{ [tag[CIDO]get[tots_els_canals]split[|]trim[]match[places-interinatge]count[]] }}}/>|
+|Marcades com a interessants|<$text text={{{ [tag[CIDO]get[estat]match[interessant]count[]] }}}/>|
+
+!! Publicades per dia
+
+<table class="cidotaula">
+<tr><th>Dia</th><th>Convocatòries</th></tr>
+<$list filter="[tag[CIDO]sort[data_pub]each[data_pub]]" variable="t"><$let d={{{ [<t>get[data_pub]] }}}>
+<tr><td><$text text=<<d>> /></td><td><$text text={{{ [tag[CIDO]get[data_pub]match<d>count[]] }}}/></td></tr>
+</$let></$list>
+</table>
+
+!! Vistes
+
+<<list-links "[tag[vista]sort[title]]">>
+
+!! Les darreres publicades
+
+<table class="cidotaula">
+<tr><th>Publicat</th><th>Convocatòria</th><th>Ens</th><th>Termini</th></tr>
+<$list filter="[tag[CIDO]!sort[data_pub]limit[8]]" emptyMessage="Encara no hi ha cap convocatòria: sincronitza el feed.">
+<tr><td><$text text={{{ [<currentTiddler>get[data_pub]] }}}/></td><td><$link to={{!!title}}><$text text={{{ [<currentTiddler>get[caption]] }}}/></$link></td><td><$text text={{{ [<currentTiddler>get[ens]] }}}/></td><td><$text text={{{ [<currentTiddler>get[termini]] }}}/></td></tr>
+</$list>
+</table>
+
+!! Darrera sincronització
+
+<$list filter="[[Estat de la sincronització]is[tiddler]]" emptyMessage="Encara no s'ha sincronitzat mai des d'aquesta màquina.">
+{{Estat de la sincronització}}
+</$list>
+

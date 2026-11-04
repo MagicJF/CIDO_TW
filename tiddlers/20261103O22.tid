@@ -1,0 +1,30 @@
+acces_al_tramit: http://tramits.gencat.cat/
+altres_requisits: Nivell C1 de català
+canal_origen: obertes
+caption: 1 plaça de Cap de l'Àrea de Mediació · Generalitat de Catalunya - Agència Catalana del…
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|altres_requisits|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|web_de_l_ens_convocant|enllacos_documents|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_pub: 2026-11-03
+data_publicacio: Tue, 03 Nov 2026
+enllacos_butlletins: https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1058342 | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1058342&type=01&language=ca_ES
+enllacos_documents: https://cultura.gencat.cat/web/.content/dgpc/serveis/agencia/documents/Convocatories-personal-2023/BASES_DE_LA_CONVOCATORIA_DEL_PROCES_SELECTIU303_signed_CA.pdf
+ens: Generalitat de Catalunya - Agència Catalana del Patrimoni Cultural
+expedient: ACPC/303
+finalitzacio_de_presentacio_de_sollicituds: 17/11/2026
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: A1 - Grau universitari (correspondència amb llicenciatures)
+identificador: 20261103O22
+materies: Administració especial sense especificar
+organisme: Ens Local / Catalunya
+placa: 1 plaça de Cap de l'Àrea de Mediació
+resum_rss: Número de referència: 20261103O22 Data de publicació: 03/11/2026 20:22:00 Ens: Generalitat de Catalunya - Agència Catalana del Patrimoni Cultural
+sistema_de_seleccio: Concurs oposició o valoració de mèrits i prova
+tags: CIDO convocatòria
+termini: 2026-11-17
+tipus_de_personal: Laboral
+title: 20261103O22
+titulacio_requerida: Grau o Llicenciatura en l'àmbit de les ciències socials, o titulació equivalent
+tots_els_canals: obertes | oposicions
+url: http://cido.diba.cat/oposicions/22430281/1-plaaa-de-cap-de-larea-de-mediacia-generalitat-de-catalunya-agancia-catalana-del-patrimoni-cultural
+web_de_l_ens_convocant: https://cultura.gencat.cat/ca/departament/estructura_i_adreces/organismes/dgpc/accio/agencia_patrimoni/convocatories-de-personal
+
+<<fitxa-cido>>

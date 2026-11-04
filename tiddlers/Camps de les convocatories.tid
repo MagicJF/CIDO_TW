@@ -1,0 +1,55 @@
+title: Camps de les convocatòries
+canal_origen: Canal d'on s'ha recollit
+data_publicacio: Data de publicació (tal com surt al canal)
+organisme: Organisme (tal com surt al canal)
+placa: Placa
+acces_al_tramit: Accés al tràmit
+altres_requisits: Altres requisits
+data_de_la_prova: Data de la prova
+expedient: Expedient
+finalitzacio_de_presentacio_de_sollicituds: Finalització del termini de presentació
+grup_de_titulacio_o_assimilat: Grup de titulació o assimilat
+identificador: Identificador (títol del tiddler)
+inici_de_presentacio_de_sollicituds: Inici del termini de presentació
+materies: Matèries (pot portar-ne més d'una, separades per comes)
+observacions: Observacions
+sistema_de_seleccio: Sistema de selecció
+tipus_de_personal: Tipus de personal
+titulacio_requerida: Titulació requerida
+torn_reservat: Torn reservat
+web_de_l_ens_convocant: Web de l'ens convocant
+enllacos_documents: Enllaços de documents (separats per barres)
+enllacos_butlletins: Enllaços de butlletins oficials (separats per barres)
+observacions_text: Observacions en text
+resum_rss: Resum del canal, amb el número de referència i l'ens
+tots_els_canals: Tots els canals on surt (separats per barres)
+url: Adreça del procés al CIDO
+ens: Ens convocant (calculat del resum del canal)
+data_pub: Data de publicació en format AAAA-MM-DD (calculada)
+termini: Data límit de presentació en format AAAA-MM-DD (calculada)
+cidocamps: Camps que porta aquest tiddler, en ordre (intern)
+font: Fitxer d'on surt la dada (intern)
+
+! Camps de les convocatòries
+
+Un tiddler per convocatòria. Cada columna del CSV és un camp amb el mateix nom que a la
+font, i el títol del tiddler és la columna `identificador`. Els camps que no hi són volen
+dir que la font no portava aquell valor.
+
+Aquesta taula és també el diccionari d'etiquetes: la fitxa d'una convocatòria llegeix
+d'aquí el nom llegible de cada camp.
+
+!! Camps calculats
+
+`ens`, `data_pub`, `termini`, `caption`, `cidocamps` i `font` no són columnes del CSV:
+els calcula la sincronització. `ens` surt del resum del canal (la columna `organisme` no
+sempre l'encerta), `data_pub` i `termini` són les mateixes dates en format AAAA-MM-DD per
+poder-les ordenar i comparar, i `caption` és el títol curt que es veu a les llistes.
+
+!! Seguiment
+
+`estat` i `notes` són teus: la sincronització no els toca mai. `estat` val `interessant`,
+`sollicitada` o `descartada` segons el botó que hagis premut a la fitxa.
+
+La font és el portal del CIDO: http://cido.diba.cat/
+

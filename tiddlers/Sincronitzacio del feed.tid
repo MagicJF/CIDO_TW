@@ -1,0 +1,12 @@
+title: Sincronització del feed
+
+!! Sincronitzar el feed
+
+El botó llegeix `cido_24h.csv` (a l'arrel d'aquesta wiki) i actualitza o crea el tiddler de
+cada convocatòria que hi surti. No esborra mai res i el que has marcat tu no es toca.
+
+<a class="tcboto-cido" href="/cido/sincronitza">Sincronitza el feed ara</a>
+
+Si el CSV no hi és, el botó ho diu i deixa la wiki com estava. Els detalls, a
+[[Com sincronitzar-ho]].
+

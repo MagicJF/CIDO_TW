@@ -1,0 +1,12 @@
+title: Per termini de presentació
+tags: vista
+
+! Per termini de presentació
+
+Agrupat pel camp `termini` de [[Camps de les convocatòries]]. Cada grup porta quantes
+convocatòries hi ha i la llista, de la més recent a la més antiga.
+
+<<vista-agrupada "termini">>
+
+<<list-links "[tag[vista]!title[]sort[title]]">>
+

@@ -1,0 +1,12 @@
+title: Per tipus de personal
+tags: vista
+
+! Per tipus de personal
+
+Agrupat pel camp `tipus_de_personal` de [[Camps de les convocatòries]]. Cada grup porta quantes
+convocatòries hi ha i la llista, de la més recent a la més antiga.
+
+<<vista-agrupada "tipus_de_personal">>
+
+<<list-links "[tag[vista]!title[]sort[title]]">>
+

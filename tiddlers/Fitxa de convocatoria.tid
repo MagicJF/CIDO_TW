@@ -1,0 +1,43 @@
+title: Fitxa de convocatòria
+tags: plantilla $:/tags/Macro
+
+\define fitxa-cido()
+! {{!!caption}}
+
+Ens convocant: ''{{!!ens}}'' · Publicat: {{!!data_pub}} · Termini: {{!!termini}} ·
+Sistema: {{!!sistema_de_seleccio}}
+
+!! Enllaços
+
+* Procés al CIDO: <$list filter="[<currentTiddler>has[url]]" variable="q" emptyMessage="—">{{!!url}}</$list>
+* Tràmit: <$list filter="[<currentTiddler>has[acces_al_tramit]]" variable="q" emptyMessage="—">{{!!acces_al_tramit}}</$list>
+* Web de l'ens: <$list filter="[<currentTiddler>has[web_de_l_ens_convocant]]" variable="q" emptyMessage="—">{{!!web_de_l_ens_convocant}}</$list>
+* Butlletins: <$list filter="[<currentTiddler>has[enllacos_butlletins]]" variable="q" emptyMessage="—">{{!!enllacos_butlletins}}</$list>
+* Documents: <$list filter="[<currentTiddler>has[enllacos_documents]]" variable="q" emptyMessage="—">{{!!enllacos_documents}}</$list>
+
+!! Seguiment
+
+<$button class="cidoboto" data-marca="interessant"><$action-setfield $field="estat" $value="interessant"/>Interessant</$button>
+<$button class="cidoboto" data-marca="sollicitada"><$action-setfield $field="estat" $value="sollicitada"/>Sol·licitada</$button>
+<$button class="cidoboto" data-marca="descartada"><$action-setfield $field="estat" $value="descartada"/>Descartada</$button>
+<$button class="cidoboto" data-marca=""><$action-setfield $field="estat" $value=""/>Treure la marca</$button>
+
+<$list filter="[<currentTiddler>has[estat]]" variable="res" emptyMessage="Sense marca.">
+Marca actual: ''<$text text={{{ [<currentTiddler>get[estat]] }}}/>''
+</$list>
+
+Notes:
+
+<$edit-text field="notes" tag="textarea" class="cidonotes" placeholder="Anotacions meves sobre aquesta convocatòria" />
+
+!! Totes les dades
+
+<table class="cidotaula cidofitxa">
+<$set name="etiquetes" value="Camps de les convocatòries"><$list filter="[<currentTiddler>get[cidocamps]split[|]]" variable="camp">
+<tr><td><$text text={{{ [<etiquetes>get<camp>else<camp>] }}}/></td><td><$view field=<<camp>> /></td></tr>
+</$list></$set>
+</table>
+
+''Font:'' <$text text={{{ [<currentTiddler>get[font]] }}}/> — camps: <$text text={{{ [<currentTiddler>get[cidocamps]split[|]count[]] }}}/>
+\end
+

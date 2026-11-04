@@ -1,0 +1,30 @@
+acces_al_tramit: https://seuelectronica.granollers.cat/sta/Relec/STAValidManager?lang=ca&url=Relec%2FTramitaForm&autoFirma=false&dboidSolicitud=6269013616687019505306
+altres_requisits: Nivell C1 de català
+canal_origen: obertes
+caption: Borsa de treball de places de Tècnic del grup A · Ajuntament de Granollers
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|altres_requisits|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|observacions|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|web_de_l_ens_convocant|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_pub: 2026-11-02
+data_publicacio: Mon, 02 Nov 2026
+enllacos_butlletins: http://bop.diba.cat/anunci/4009505
+ens: Ajuntament de Granollers
+expedient: 14/2026/13
+finalitzacio_de_presentacio_de_sollicituds: 09/11/2026
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: A - Grau universitari
+identificador: 20261102O70
+materies: Administració especial sense especificar
+observacions: Per poder formar part de la llista, caldrà estar donat d'alta a l'espai "Currículum: registra les teves dades", dins l'espai "Treballa a l'Ajuntament" de la web municipal / Veure com s'ha de presentar sol·licitud segons cada situació
+organisme: Ens Local / Catalunya
+placa: Borsa de treball de places de Tècnic del grup A
+resum_rss: Número de referència: 20261102O70 Data de publicació: 02/11/2026 20:22:00 Ens: Ajuntament de Granollers
+sistema_de_seleccio: Oposició o prova
+tags: CIDO convocatòria
+termini: 2026-11-09
+tipus_de_personal: Interí o temporal
+title: 20261102O70
+titulacio_requerida: Títol universitari
+tots_els_canals: borses-treball | obertes | oposicions | places-interinatge
+url: http://cido.diba.cat/oposicions/22426477/borsa-de-treball-de-places-de-tecnic-del-grup-a-ajuntament-de-granollers
+web_de_l_ens_convocant: https://seuelectronica.granollers.cat/portal/sede/se_contenedor1_treballa_ajuntament.jsp?seccion=s_ldes_d1_v2.jsp&codbusqueda=51&language=ca&codResi=1&codMenuPN=21&codMenu=239&layout=se_contenedor1.jsp&buscadorTipoOfertaSeleccionado=103&buscadorEstadoOfertaSeleccionado=106&layout=se_contenedor1.jsp
+
+<<fitxa-cido>>
