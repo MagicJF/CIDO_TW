@@ -73,8 +73,10 @@ if "Convocatòries: 0" not in r.stdout:
     print(f"FAIL  amb un CSV tallat hauria de no desar cap convocatòria: {r.stdout.strip()!r}"); sys.exit(1)
 if "cometes sense tancar" not in r.stderr:
     print(f"FAIL  amb un CSV tallat ho hauria de dir: {r.stderr.strip()!r}"); sys.exit(1)
-if canviats:
-    print(f"FAIL  amb un CSV tallat ha tocat fitxers: {canviats}"); sys.exit(1)
+nous = sorted(k for k in set(despres) - set(abans) if not salta(k))
+perduts = sorted(k for k in set(abans) - set(despres) if not salta(k))
+if canviats or nous or perduts:
+    print(f"FAIL  amb un CSV tallat ha tocat fitxers: {canviats}{nous}{perduts}"); sys.exit(1)
 print("PASS  un CSV tallat a mig camp entre cometes no desa res, ho diu i no toca cap fitxer")
 sys.exit(0)
 PY
@@ -195,20 +197,64 @@ sys.exit(0)
 PY
 [ $? -eq 0 ] || FAILS=$((FAILS+1))
 
-echo "== 4. el seguiment de la persona sobreviu =="
-python3 - "${TMP}/wiki/tiddlers/20260101O1.tid" <<'PY'
-import pathlib, sys
-f = pathlib.Path(sys.argv[1])
-t = f.read_text(encoding="utf-8")
-f.write_text(t.replace("title: 20260101O1", "title: 20260101O1\nestat: interessant\nnotes: pendent de mirar-ho"))
-print("PASS  marca escrita (estat + notes) sobre 20260101O1")
+echo "== 4. el seguiment de la persona sobreviu, i el feed es refresca =="
+python3 - "${TMP}/wiki" "$TW" <<'PY'
+import pathlib, subprocess, sys
+wiki = pathlib.Path(sys.argv[1]); tw = sys.argv[2]
+csv = wiki / "cido_24h.csv"
+t = wiki / "tiddlers" / "20260101O1.tid"
+def camps(f):
+    d = {}
+    for linia in f.read_text(encoding="utf-8").splitlines():
+        if not linia.strip(): break
+        if ":" in linia:
+            k, v = linia.split(":", 1); d[k.strip()] = v.strip()
+    return d
+def sincro():
+    return subprocess.run([tw, str(wiki), "--cido-sincronitza"], capture_output=True, text=True)
+fallades = []
+def ok(m): print(f"PASS  {m}")
+def bad(m):
+    print(f"FAIL  {m}"); fallades.append(m)
+
+# La persona marca la convocatòria des de la fitxa.
+t.write_text(t.read_text(encoding="utf-8").replace(
+    "title: 20260101O1", "title: 20260101O1\nestat: interessant\nnotes: pendent de mirar-ho"))
+
+# El feed canvia de debò: una columna nova amb valor. El sync ha de passar per l'actualització.
+# Es manipula amb el mòdul csv i no amb split: hi ha un camp amb un salt de línia a dins.
+import csv as csvmod, io
+with open(csv, encoding="utf-8", newline="") as fh:
+    bona = fh.read()
+files = list(csvmod.reader(io.StringIO(bona)))
+caps = files[0] + ["prova_feed"]
+files = [f + ["valor-de-prova" if f and f[0] == "obertes" else ""] for f in files[1:]]
+buf = io.StringIO()
+w = csvmod.writer(buf, lineterminator="\r\n")
+w.writerow(caps); w.writerows(files)
+csv.write_text(buf.getvalue(), encoding="utf-8")
+sincro()
+c = camps(t)
+if c.get("prova_feed") == "valor-de-prova": ok("la columna nova del feed entra al tiddler")
+else: bad(f"la columna nova del feed no hi és ({c.get('prova_feed')!r})")
+if c.get("estat") == "interessant" and c.get("notes") == "pendent de mirar-ho":
+    ok("en actualitzar una convocatòria, el seguiment de la persona es conserva")
+else: bad(f"l'actualització ha perdut el seguiment ({c.get('estat')!r}, {c.get('notes')!r})")
+
+# I si el feed deixa de portar aquell camp, el camp ha de marxar.
+csv.write_text(bona, encoding="utf-8")
+sincro()
+c = camps(t)
+if "prova_feed" not in c: ok("un camp que ja no és al CSV desapareix del tiddler")
+else: bad("un camp que ja no és al CSV s'ha quedat al tiddler")
+if c.get("estat") == "interessant" and c.get("notes") == "pendent de mirar-ho":
+    ok("el seguiment sobreviu també a la segona passada")
+else: bad("el seguiment s'ha perdut a la segona passada")
+print()
+print(f"RESULTAT: {len(fallades)} fallada(es) al seguiment." if fallades else "RESULTAT: seguiment verificat.")
+sys.exit(1 if fallades else 0)
 PY
-"$TW" "${TMP}/wiki" --cido-sincronitza >"${TMP}/sincro-3.txt" 2>&1
-if grep -q "estat: interessant" "${TMP}/wiki/tiddlers/20260101O1.tid" && grep -q "notes: pendent de mirar-ho" "${TMP}/wiki/tiddlers/20260101O1.tid"; then
-	ok "la sincronització no ha trepitjat el camp estat ni les notes"
-else
-	bad "la sincronització ha esborrat el seguiment de la persona"
-fi
+[ $? -eq 0 ] || FAILS=$((FAILS+1))
 
 echo "== 5. la ruta HTTP del botó =="
 PORT="$(python3 -c 'import socket;s=socket.socket();s.bind(("127.0.0.1",0));print(s.getsockname()[1]);s.close()')"
@@ -249,11 +295,17 @@ PY
 	fi
 	mv "${TMP}/wiki/cido_24h.csv" "${TMP}/wiki/cido_24h.csv.fora"
 	codi=$(curl -s -o "${TMP}/sense-csv.html" -m 30 -w '%{http_code}' "http://127.0.0.1:${PORT}/cido/sincronitza")
+	codi_json=$(curl -s -o /dev/null -m 30 -w '%{http_code}' "http://127.0.0.1:${PORT}/cido/sincronitza?format=json")
 	mv "${TMP}/wiki/cido_24h.csv.fora" "${TMP}/wiki/cido_24h.csv"
 	if [ "$codi" = "500" ] && grep -q "cido_24h.csv" "${TMP}/sense-csv.html"; then
 		ok "sense CSV la ruta respon 500 i diu quin fitxer falta"
 	else
 		bad "sense CSV la ruta hauria de dir que falta el fitxer (${codi})"
+	fi
+	if [ "${codi_json:-}" = "500" ]; then
+		ok "sense CSV, el camí JSON també respon 500 (no un 200 enganyós)"
+	else
+		bad "sense CSV, el camí JSON hauria de respondre 500 i respon ${codi_json:-res}"
 	fi
 fi
 kill "$SRV" 2>/dev/null
@@ -296,6 +348,7 @@ def pagina(t):
 info = {f: camps(f) for f in sorted((wiki / "tiddlers").glob("*.tid"))}
 titols = {f: c.get("title", "").strip() for f, c in info.items()}
 cido = {c.get("title", ""): c for c in info.values() if "CIDO" in c.get("tags", "").split()}
+vistes = {c["title"] for c in info.values() if "vista" in c.get("tags", "").split()}
 
 # $:/DefaultTiddlers no pot apuntar enlloc que no hi sigui
 cos = (wiki / "tiddlers" / "$__DefaultTiddlers.tid").read_text(encoding="utf-8").split("\n\n", 1)
@@ -333,17 +386,34 @@ else:
     else: ok(f"el tauler declara {len(cido)} convocatòries, les que hi ha")
     if 'href="/cido/sincronitza"' in raw: ok("el botó de sincronitzar és al tauler, amb l'enllaç de la ruta")
     else: bad("el tauler no porta el botó de sincronitzar")
-    vistes = {c["title"] for c in info.values() if "vista" in c.get("tags", "").split()}
     enllacos = set()
     for etiqueta in re.findall(r"<a\b[^>]*tc-tiddlylink-resolves[^>]*>", raw):
         m = re.search(r'href="([^"]+)"', etiqueta)
         # El build estàtic dobla la codificació dels noms (tv-wikilink-template).
         if m: enllacos.add(urllib.parse.unquote(urllib.parse.unquote(m.group(1)))[:-5])
-    faltes = sorted(vistes - enllacos)
-    if faltes: bad(f"{len(faltes)} vista(es) sense enllaç al tauler (ex. {faltes[:3]})")
-    else: ok(f"el tauler enllaça les {len(vistes)} vistes")
+    # El tauler no s'ha d'enllaçar a si mateix (és una vista com les altres).
+    faltes = sorted((vistes - {"Tauler CIDO"}) - enllacos)
+    if "Tauler CIDO" in enllacos: bad("el tauler s'enllaça a si mateix")
+    elif faltes: bad(f"{len(faltes)} vista(es) sense enllaç al tauler (ex. {faltes[:3]})")
+    else: ok(f"el tauler enllaça les altres {len(vistes) - 1} vistes")
 
 # Les vistes agrupades: grups, i la llista sencera dins dels grups
+# Cada pàgina de vista ha de llistar les ALTRES vistes i no ella mateixa: `!title[]` no
+# exclou el tiddler actual i la vista sortia a la seva pròpia llista.
+for f, c in info.items():
+    if "vista" not in c.get("tags", "").split(): continue
+    t = c.get("title", "")
+    p = pagina(t)
+    if not p.is_file(): continue
+    items = [html.unescape(re.sub(r"<[^>]+>", "", x)).strip()
+             for x in re.findall(r"<li>(.*?)</li>", p.read_text(encoding="utf-8"), re.S)]
+    if t in items:
+        bad(f"la vista «{t}» es llista a si mateixa")
+    else:
+        faltes = sorted(v for v in vistes if v != t and v not in items)
+        if faltes: bad(f"la vista «{t}» no llista {faltes[:3]}")
+        else: ok(f"la vista «{t}» llista les altres {len(vistes) - 1} vistes i no ella mateixa")
+
 # Cada vista agrupada ha de treure els grups i una fila per cada convocatòria que
 # PORTI aquell camp (una convocatòria sense termini, per exemple, no surt a la vista de terminis).
 vistes_agrupades = {"Per grup de titulació": "grup_de_titulacio_o_assimilat", "Per matèries": "materies",

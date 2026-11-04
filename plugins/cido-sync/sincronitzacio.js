@@ -24,6 +24,8 @@ var TITOL_ESTAT = "Estat de la sincronització";
 var DERIVATS = ["caption", "ens", "data_pub", "termini", "cidocamps", "font"];
 // Camps que governa la sincronització a més de les columnes.
 var DE_SISTEMA = ["title", "tags", "text"];
+// Camps que són de la persona: si el feed portés una columna amb aquest nom, s'ignora.
+var CAMPS_PERSONA = ["estat", "notes"];
 var MESOS = {jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06",
              jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12"};
 
@@ -60,10 +62,22 @@ exports.parsejaCsv = function(text) {
 	return {files: files, tallat: dinsCometes};
 };
 
-/* "Tue, 03 Nov 2026" → "2026-11-03" (i "" si no encaixa). */
+/* Els dies que té un mes, amb els anys de traspàs. */
+function diesDelMes(any, mes) {
+	if(mes === 2) { return (any % 4 === 0 && (any % 100 !== 0 || any % 400 === 0)) ? 29 : 28; }
+	return [31, 0, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][mes - 1] || 0;
+}
+
+/*
+"Tue, 03 Nov 2026" → "2026-11-03" (i "" si no encaixa). No n'hi ha prou que siguin
+xifres: una data que no existeix al calendari (31 de febrer) faria una vista de
+terminis amb un dia que no hi és.
+*/
 function dataIso(text) {
 	var m = /^[A-Za-z]{3},?\s+(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/.exec(colapsa(text));
 	if(!m || !MESOS[m[2].toLowerCase()]) { return ""; }
+	var dia = parseInt(m[1], 10), mes = parseInt(MESOS[m[2].toLowerCase()], 10), any = parseInt(m[3], 10);
+	if(dia < 1 || dia > diesDelMes(any, mes)) { return ""; }
 	return m[3] + "-" + MESOS[m[2].toLowerCase()] + "-" + ("0" + m[1]).slice(-2);
 }
 
@@ -71,6 +85,8 @@ function dataIso(text) {
 function dataTermini(text) {
 	var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(colapsa(text));
 	if(!m) { return ""; }
+	var dia = parseInt(m[1], 10), mes = parseInt(m[2], 10), any = parseInt(m[3], 10);
+	if(mes < 1 || mes > 12 || dia < 1 || dia > diesDelMes(any, mes)) { return ""; }
 	return m[3] + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[1]).slice(-2);
 }
 
@@ -95,7 +111,8 @@ function desescapaHtml(text) {
 	return text.replace(/&(#x?[0-9a-fA-F]+|[a-zA-Z]+);/g, function(tot, cos) {
 		if(cos.charAt(0) === "#") {
 			var n = cos.charAt(1).toLowerCase() === "x" ? parseInt(cos.slice(2), 16) : parseInt(cos.slice(1), 10);
-			return isNaN(n) ? tot : String.fromCodePoint(n);
+			// Fora del rang d'Unicode `fromCodePoint` peta: val més deixar l'entitat com a text.
+			return (isNaN(n) || n < 0 || n > 0x10FFFF) ? tot : String.fromCodePoint(n);
 		}
 		return entitats[cos.toLowerCase()] !== undefined ? entitats[cos.toLowerCase()] : tot;
 	});
@@ -141,6 +158,7 @@ exports.llegeixCsv = function(text) {
 exports.construeixTiddler = function(registre, capsalera, existent) {
 	var camps = {}, presents = [];
 	capsalera.forEach(function(col) {
+		if(CAMPS_PERSONA.indexOf(col) !== -1) { return; }
 		var v = colapsa(registre[col]);
 		if(v === "") { return; }
 		camps[col] = v;
@@ -152,7 +170,7 @@ exports.construeixTiddler = function(registre, capsalera, existent) {
 	// Els camps que no governa la sincronització es conserven (el seguiment de la
 	// persona: `estat`, `notes`, i el que hi hagi posat TiddlyWiki).
 	var gestionats = {};
-	capsalera.forEach(function(c) { gestionats[c] = true; });
+	capsalera.forEach(function(c) { if(CAMPS_PERSONA.indexOf(c) === -1) { gestionats[c] = true; } });
 	DERIVATS.concat(DE_SISTEMA).forEach(function(c) { gestionats[c] = true; });
 	if(existent) {
 		existent.fields["cidocamps"] && existent.fields["cidocamps"].split("|").forEach(function(c) { gestionats[c] = true; });
@@ -160,7 +178,9 @@ exports.construeixTiddler = function(registre, capsalera, existent) {
 			if(!gestionats[k]) { tiddler[k] = existent.fields[k]; }
 		}
 	}
-	capsalera.forEach(function(c) { if(camps[c] !== undefined) { tiddler[c] = camps[c]; } });
+	capsalera.forEach(function(c) {
+		if(CAMPS_PERSONA.indexOf(c) === -1 && camps[c] !== undefined) { tiddler[c] = camps[c]; }
+	});
 	tiddler.title = camps.identificador;
 	tiddler.tags = ETIQUETES.join(" ");
 	tiddler.caption = retalla(camps.placa ? camps.placa + (ens ? " · " + ens : "") : ens, MAX_CAPTION);
@@ -186,18 +206,10 @@ function mateixosCamps(existent, nou, gestionats) {
 
 function campsGestionats(capsalera, tiddler) {
 	var g = {};
-	capsalera.forEach(function(c) { g[c] = true; });
+	capsalera.forEach(function(c) { if(CAMPS_PERSONA.indexOf(c) === -1) { g[c] = true; } });
 	DERIVATS.concat(DE_SISTEMA).forEach(function(c) { g[c] = true; });
 	(tiddler.cidocamps || "").split("|").forEach(function(c) { if(c) { g[c] = true; } });
 	return g;
-}
-
-function campsPerTreure(existent, nou, gestionats) {
-	var sobrers = [];
-	for(var k in gestionats) {
-		if(existent.hasField(k) && nou[k] === undefined) { sobrers.push(k); }
-	}
-	return sobrers;
 }
 
 /*
@@ -237,6 +249,12 @@ exports.sincronitza = function(wiki, opcions) {
 		}
 		vistos[titol] = true;
 		var existent = wiki.getTiddler(titol);
+		// El títol surt del CSV: si apunta a un tiddler que no ha creat el feed (una pàgina
+		// de la interfície, un tiddler de sistema), no s'hi toca res.
+		if(titol.charAt(0) === "$" || (existent && !existent.hasField("cidocamps"))) {
+			resum.errors.push("L'identificador «" + titol + "» no és d'una convocatòria del feed; no s'ha tocat.");
+			return;
+		}
 		var nou = exports.construeixTiddler(registre, dades.capsalera, existent);
 		if(!nou) {
 			resum.errors.push("El registre " + (index + 1) + " no té prou dades per fer-ne un tiddler.");
@@ -247,10 +265,8 @@ exports.sincronitza = function(wiki, opcions) {
 			resum.sense_canvis++;
 			return;
 		}
-		// Un camp que mana la sincronització i ja no hi és s'ha de treure de debò:
-		// `addTiddler` és un merge i, sense això, el valor vell s'hi quedaria per sempre.
-		var sobrers = existent ? campsPerTreure(existent, nou, campsGestionats(dades.capsalera, nou)) : [];
-		if(sobrers.length > 0) { wiki.deleteTiddler(titol); }
+		// `addTiddler` substitueix el tiddler sencer (no és cap merge), així que un camp que
+		// ja no és al CSV desapareix sol; els camps de la persona es tornen a posar a `nou`.
 		wiki.addTiddler(nou);
 		if(existent) { resum.actualitzades++; resum.actualitzades_titols.push(titol); }
 		else { resum.creades++; resum.creades_titols.push(titol); }

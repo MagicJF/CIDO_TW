@@ -2,10 +2,9 @@ title: Fitxa de convocatòria
 tags: plantilla $:/tags/Macro
 
 \define fitxa-cido()
-! {{!!caption}}
+! <$text text={{{ [<currentTiddler>get[caption]] }}}/>
 
-Ens convocant: ''{{!!ens}}'' · Publicat: {{!!data_pub}} · Termini: {{!!termini}} ·
-Sistema: {{!!sistema_de_seleccio}}
+Ens convocant: <strong><$text text={{{ [<currentTiddler>get[ens]] }}}/></strong> · Publicat: <$text text={{{ [<currentTiddler>get[data_pub]] }}}/> · Termini: <$text text={{{ [<currentTiddler>get[termini]] }}}/> · Sistema: <$text text={{{ [<currentTiddler>get[sistema_de_seleccio]] }}}/>
 
 !! Enllaços
 

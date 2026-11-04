@@ -8,5 +8,5 @@ convocatòries hi ha i la llista, de la més recent a la més antiga.
 
 <<vista-agrupada "sistema_de_seleccio">>
 
-<<list-links "[tag[vista]!title[]sort[title]]">>
+<<list-links "[tag[vista]!is[current]sort[title]]">>
 

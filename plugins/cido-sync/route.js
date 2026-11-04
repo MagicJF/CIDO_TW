@@ -22,6 +22,14 @@ function escapa(t) {
 }
 
 exports.handler = function(request, response, state) {
+	// La ruta fa la feina del servidor (crea i actualitza tiddlers), però és un GET i
+	// TiddlyWiki autoritza els GET contra `readers`. Sense aquesta comprovació, qui només
+	// pot llegir podria fer escriure la wiki.
+	if(!state.server.isAuthorized("writers", state.authenticatedUsername)) {
+		state.sendResponse(403, {"Content-Type": "text/plain; charset=utf-8"},
+			"No tens permís d'escriptura en aquesta wiki.\n");
+		return;
+	}
 	var lib = require("$:/plugins/cido-sync/sincronitzacio.js");
 	var resum;
 	try {
@@ -32,8 +40,11 @@ exports.handler = function(request, response, state) {
 			creades_titols: [], actualitzades_titols: []};
 	}
 	var arrel = (state.pathPrefix || "") + "/";
+	// L'estat es deixa sempre que s'hagi llegit el CSV, també quan la resposta és JSON:
+	// si no, el tauler ensenyaria la sincronització anterior.
+	if(resum.entrades > 0) { lib.anotaEstat(state.wiki, resum); }
 	if(state.queryParameters && state.queryParameters.format === "json") {
-		state.sendResponse(200, {"Content-Type": "application/json; charset=utf-8"},
+		state.sendResponse(resum.entrades === 0 ? 500 : 200, {"Content-Type": "application/json; charset=utf-8"},
 			JSON.stringify(resum, null, 2) + "\n");
 		return;
 	}
@@ -41,7 +52,6 @@ exports.handler = function(request, response, state) {
 		state.sendResponse(500, {"Content-Type": "text/html; charset=utf-8"}, paginaError(resum, arrel));
 		return;
 	}
-	lib.anotaEstat(state.wiki, resum);
 	state.sendResponse(302, {"Location": arrel + "?v=" + Date.now(), "Content-Type": "text/plain; charset=utf-8"}, "");
 };
 

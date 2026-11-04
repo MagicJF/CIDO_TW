@@ -58,8 +58,13 @@ així que no hi ha dues maneres de fer el mateix que es puguin separar.
 La sincronització **no esborra mai res** (si una convocatòria desapareix del CSV, es queda a la
 wiki: fa d'arxiu) i **no hi posa marques de temps**, de manera que dues passades amb el mateix
 CSV deixen els fitxers exactament iguals. Els camps que escriu la persona (`estat`, `notes`) no
-es toquen mai. Una fila que no es pot interpretar (una coma sense cometes desplaça les columnes)
-no es desa i es diu; una fila curta es desa amb els camps del final buits i també es diu.
+es toquen mai, ni tan sols si el feed portés una columna amb aquell nom: s'ignora.
+
+El títol de cada tiddler surt del CSV, així que si una fila apunta a un tiddler que no ha creat
+el feed —una pàgina de la interfície, un tiddler de sistema— no s'hi toca res i es diu. Una fila
+que no es pot interpretar (una coma sense cometes desplaça les columnes) no es desa i es diu; una
+fila curta es desa amb els camps del final buits i també es diu; i si el fitxer s'ha quedat a mig
+escriure (un camp entre cometes sense tancar), la sincronització no toca absolutament res.
 
 ## Navegar les convocatòries
 

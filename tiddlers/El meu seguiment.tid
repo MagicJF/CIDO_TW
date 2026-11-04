@@ -38,3 +38,7 @@ o '''descartada''', i escriure-hi notes. Aquí les tens agrupades. La marca viu 
 
 Són <strong><$text text={{{ [tag[CIDO]!has[estat]count[]] }}}/></strong> convocatòries sense cap marca.
 
+!! Altres vistes
+
+<<list-links "[tag[vista]!is[current]sort[title]]">>
+

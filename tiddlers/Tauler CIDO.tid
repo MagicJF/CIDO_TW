@@ -28,7 +28,7 @@ CSV és un camp. Aquesta wiki és el lloc per navegar-les, filtrar-les i seguir-
 
 !! Vistes
 
-<<list-links "[tag[vista]sort[title]]">>
+<<list-links "[tag[vista]!is[current]sort[title]]">>
 
 !! Les darreres publicades
 

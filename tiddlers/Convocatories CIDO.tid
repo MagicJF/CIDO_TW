@@ -28,5 +28,5 @@ Són <strong><$text text={{{ [tag[CIDO]count[]] }}}/></strong> convocatòries.
 
 !! Per on seguir
 
-<<list-links "[tag[vista]sort[title]]">>
+<<list-links "[tag[vista]!is[current]sort[title]]">>
 
