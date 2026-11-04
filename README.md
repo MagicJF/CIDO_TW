@@ -38,6 +38,15 @@ La sincronització converteix cada fila en un tiddler:
 
 El diccionari de camps i etiquetes és a [[Camps de les convocatòries]].
 
+### El corpus anterior
+
+Fins ara la wiki es nodria del dataset obert *Convocatòries de Personal* (793 processos amb el
+títol = id de CIDO). Aquell corpus i el seu importador (`tools/cido-import.py`) s'han retirat:
+eren una segona font, amb una altra clau, per al mateix assumpte. Els seus tiddlers són a
+l'historial del repositori, i la sincronització torna a crear qualsevol convocatòria que aparegui
+al feed amb el seu `identificador`. No hi havia cap marca escrita per la persona (la fitxa
+anterior era de només lectura), així que no s'hi va perdre res.
+
 ### Com es sincronitza
 
 Amb el botó de la wiki (el tauler i [[Com sincronitzar-ho]]) o sense navegador:
