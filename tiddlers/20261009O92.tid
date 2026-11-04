@@ -1,0 +1,28 @@
+acces_al_tramit: https://apps.udg.edu/Registre/?formulari=PlacaRecerca
+canal_origen: oposicions
+caption: 1 plaça de Tècnic al Departament de Dret Públic · Universitat de Girona (UdG)
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|web_de_l_ens_convocant|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_pub: 2026-11-02
+data_publicacio: Mon, 02 Nov 2026
+enllacos_butlletins: https://seu.udg.edu/ca-es/publicacions-oficials/tauler-danuncis-electronic/idanunci/54193 | https://seu.udg.edu/ca-es/publicacions-oficials/tauler-danuncis-electronic/idanunci/54193?_ga=2.177290469.1919028735.1791889005-805486191.1767957336
+ens: Universitat de Girona (UdG)
+expedient: PAS-PR-113/26
+finalitzacio_de_presentacio_de_sollicituds: 16/10/2026
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: A2 - Grau universitari (correspondència amb diplomatures)
+identificador: 20261009O92
+materies: Dret
+organisme: Ens Local / Catalunya
+placa: 1 plaça de Tècnic al Departament de Dret Públic
+resum_rss: Número de referència: 20261009O92 Data de publicació: 02/11/2026 20:22:07 Ens: Universitat de Girona (UdG)
+sistema_de_seleccio: Concurs o valoració de mèrits
+tags: CIDO convocatòria
+termini: 2026-10-16
+tipus_de_personal: Laboral temporal
+title: 20261009O92
+titulacio_requerida: Titulació universitària de grau mitjà (Graduats universitaris, diplomats universitaris, enginyers tècnics i arquitectes tècnics)
+tots_els_canals: convocades-sistema-concurs | oposicions
+url: http://cido.diba.cat/oposicions/22315933/1-placa-de-tecnic-al-departament-de-dret-public-universitat-de-girona-udg
+web_de_l_ens_convocant: https://www.udg.edu/ca/coneix/Treballa-a-la-UdG/Personal-dAdministracio-i-Serveis/Laboral/Ofertes-treball-temporal
+
+<<fitxa-cido>>

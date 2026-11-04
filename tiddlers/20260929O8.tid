@@ -1,0 +1,23 @@
+canal_origen: oposicions
+caption: Proves per a l'obtenció i la renovació del certificat de capacitació professional per a…
+cidocamps: canal_origen|data_publicacio|organisme|placa|data_de_la_prova|finalitzacio_de_presentacio_de_sollicituds|identificador|inici_de_presentacio_de_sollicituds|materies|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_de_la_prova: 12/11/2026
+data_pub: 2026-11-02
+data_publicacio: Mon, 02 Nov 2026
+enllacos_butlletins: https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1055318 | https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1058205 | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1055318&type=01&language=ca_ES | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1058205&type=01&language=ca_ES
+ens: Generalitat de Catalunya - Departament de Territori, Habitatge i Transició Ecològica
+finalitzacio_de_presentacio_de_sollicituds: 09/10/2026
+font: cido_24h.csv
+identificador: 20260929O8
+inici_de_presentacio_de_sollicituds: 01/10/2026
+materies: Altres convocatòries
+organisme: Ens Local / Catalunya
+placa: Proves per a l'obtenció i la renovació del certificat de capacitació professional per a l'exercici de l'activitat de conseller de seguretat per al transport de mercaderies perilloses per carretera o per ferrocarril
+resum_rss: Número de referència: 20260929O8 Data de publicació: 02/11/2026 20:22:07 Ens: Generalitat de Catalunya - Departament de Territori, Habitatge i Transició Ecològica
+tags: CIDO convocatòria
+termini: 2026-10-09
+title: 20260929O8
+tots_els_canals: oposicions
+url: http://cido.diba.cat/oposicions/22245045/proves-per-a-lobtencio-i-la-renovacio-del-certificat-de-capacitacio-professional-per-a-lexercici-de-lactivitat-de-conseller-de-seguretat-per-al-transport-de-mercaderies-perilloses-per-carretera-o-per-ferrocarril-generalitat-de-catalunya-departament-de-territori-habitatge-i-transicio-ecologica
+
+<<fitxa-cido>>

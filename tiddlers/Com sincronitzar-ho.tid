@@ -1,0 +1,30 @@
+title: Com sincronitzar-ho
+
+! Com sincronitzar-ho
+
+{{Sincronització del feed}}
+
+El botó crida la ruta `GET /cido/sincronitza`, que és del servidor de TiddlyWiki: fa la feina
+al servidor i torna a la wiki amb una marca de temps perquè el navegador no ensenyi la còpia
+vella. També pots fer la mateixa feina sense navegador:
+
+$$$bash
+tiddlywiki . --cido-sincronitza      # o bé:
+curl -s 'http://127.0.0.1:8101/cido/sincronitza?format=json'
+$$$
+
+!! D'on surt el CSV
+
+El col·lector llegeix els canals RSS del CIDO i les fitxes dels processos, i escriu
+`cido_24h.csv` amb una fila per convocatòria. La wiki només depèn del format, no del
+col·lector: la primera fila són els noms de columna i la clau és `identificador`.
+
+!! Què fa exactament la sincronització
+
+* Un tiddler per fila, amb el títol a `identificador` i una columna per camp.
+* Els camps que no són del CSV i que has escrit tu (`estat`, `notes`) es conserven.
+* Res de marques de temps: dues execucions amb el mateix CSV deixen els fitxers iguals.
+* No esborra cap convocatòria, ni tan sols si desapareix del CSV: la wiki fa d'arxiu.
+
+El vocabulari de camps és a [[Camps de les convocatòries]].
+

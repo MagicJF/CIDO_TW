@@ -1,0 +1,28 @@
+acces_al_tramit: https://seleccio.uab.cat/
+canal_origen: oposicions
+caption: 5 places de Tècnic especialista de laboratori · Universitat Autònoma de Barcelona (UAB)
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|web_de_l_ens_convocant|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_pub: 2026-11-02
+data_publicacio: Mon, 02 Nov 2026
+enllacos_butlletins: https://tauler.seu-e.cat/api/rss?ens=11 | https://tauler.seu-e.cat/detall?idEns=11&idEdicte=649701 | https://tauler.seu-e.cat/detall?idEns=11&idEdicte=656292
+ens: Universitat Autònoma de Barcelona (UAB)
+expedient: 2026G3LF01
+finalitzacio_de_presentacio_de_sollicituds: 22/10/2026
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: C1 - Batxillerat, FP 2n grau, cicles formatius grau superior
+identificador: 20260930O122
+materies: Recerca / Laboratori
+organisme: Ens Local / Catalunya
+placa: 5 places de Tècnic especialista de laboratori
+resum_rss: Número de referència: 20260930O122 Data de publicació: 02/11/2026 20:22:07 Ens: Universitat Autònoma de Barcelona (UAB)
+sistema_de_seleccio: Concurs o valoració de mèrits
+tags: CIDO convocatòria
+termini: 2026-10-22
+tipus_de_personal: Laboral temporal
+title: 20260930O122
+titulacio_requerida: Titulació de formació professional de grau superior (FP2), cicle formatiu de grau mitjà, batxillerat o titulació equivalent.
+tots_els_canals: borses-treball | convocades-sistema-concurs | oposicions
+url: http://cido.diba.cat/oposicions/22269066/5-places-de-tecnic-especialista-de-laboratori-universitat-autonoma-de-barcelona-uab
+web_de_l_ens_convocant: https://tauler.seu-e.cat/api/rss?ens=11
+
+<<fitxa-cido>>

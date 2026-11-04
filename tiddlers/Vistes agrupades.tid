@@ -1,0 +1,15 @@
+title: Vistes agrupades
+tags: plantilla $:/tags/Macro
+
+\define vista-agrupada(camp)
+<$list filter="[tag[CIDO]has[$camp$]sort[$camp$]each[$camp$]]" variable="t"><$let clau={{{ [<t>get[$camp$]] }}} etiquetes="Camps de les convocatòries" f="[get[$camp$]match<clau>]">
+<h2 class="cidogrup"><$text text={{{ [<etiquetes>get[$camp$]else[$camp$]] }}}/>: <$text text=<<clau>> /> (<$text text={{{ [tag[CIDO]filter<f>count[]] }}}/>)</h2>
+<table class="cidotaula">
+<tr><th>Publicat</th><th>Convocatòria</th><th>Ens</th><th>Termini</th></tr>
+<$list filter="[tag[CIDO]filter<f>!sort[data_pub]]">
+<tr><td><$text text={{{ [<currentTiddler>get[data_pub]] }}}/></td><td><$link to={{!!title}}><$text text={{{ [<currentTiddler>get[caption]] }}}/></$link></td><td><$text text={{{ [<currentTiddler>get[ens]] }}}/></td><td><$text text={{{ [<currentTiddler>get[termini]] }}}/></td></tr>
+</$list>
+</table>
+</$let></$list>
+\end
+

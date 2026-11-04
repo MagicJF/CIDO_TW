@@ -1,0 +1,32 @@
+acces_al_tramit: https://seu.tarragona.cat/sta/CarpetaPublic/doEvent?APP_CODE=STA&PAGE_CODE=CATALOGO
+altres_requisits: Nivell C1 de català
+canal_origen: obertes
+caption: 5 places d'Administratiu · Ajuntament de Tarragona - Institut Municipal de Serveis Socials
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|altres_requisits|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|observacions|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|torn_reservat|web_de_l_ens_convocant|enllacos_documents|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_pub: 2026-11-03
+data_publicacio: Tue, 03 Nov 2026
+enllacos_butlletins: https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1057948 | https://dogc.gencat.cat/ca/document-del-dogc/?documentId=980351 | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1057948&type=01&language=ca_ES | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=980351&type=01&language=ca_ES | https://www.boe.es/boe/dias/2026/11/03/pdfs/BOE-A-2026-23045.pdf | https://www.boe.es/diario_boe/txt.php?id=BOE-A-2026-23045 | https://www.dipta.cat/bopt/web/anunci/365119
+enllacos_documents: https://www.boe.es/boe/dias/2026/11/03/pdfs/BOE-A-2026-23045.pdf
+ens: Ajuntament de Tarragona - Institut Municipal de Serveis Socials
+expedient: 2026/2-IG510
+finalitzacio_de_presentacio_de_sollicituds: 01/12/2026
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: C1 - Batxillerat, FP 2n grau, cicles formatius grau superior
+identificador: 20240308O62
+materies: Administració general
+observacions: Places: 191, 192, 193, 194 i 195
+organisme: Ens Local / Catalunya
+placa: 5 places d'Administratiu
+resum_rss: Número de referència: 20240308O62 Data de publicació: 03/11/2026 20:22:00 Ens: Ajuntament de Tarragona - Institut Municipal de Serveis Socials
+sistema_de_seleccio: Concurs oposició o valoració de mèrits i prova
+tags: CIDO convocatòria
+termini: 2026-12-01
+tipus_de_personal: Funcionari
+title: 20240308O62
+titulacio_requerida: Batxiller o tècnic o equivalent o superior
+torn_reservat: 1 plaça reservada a persones amb discapacitat
+tots_els_canals: borses-treball | obertes | oposicions
+url: http://cido.diba.cat/oposicions/17035449/5-places-dadministratiu-ajuntament-de-tarragona-institut-municipal-de-serveis-socials
+web_de_l_ens_convocant: https://seu2.tarragona.cat/ofertaPublicaCategoriaPublic/categories?tipusOferta=&tipus=Personal_fix&estat=&text=&dataOfertaPublicaFilter=&ordreOfertaPublicaFilter=&max=10&offset=10
+
+<<fitxa-cido>>

@@ -1,0 +1,12 @@
+title: Per titulació requerida
+tags: vista
+
+! Per titulació requerida
+
+Agrupat pel camp `titulacio_requerida` de [[Camps de les convocatòries]]. Cada grup porta quantes
+convocatòries hi ha i la llista, de la més recent a la més antiga.
+
+<<vista-agrupada "titulacio_requerida">>
+
+<<list-links "[tag[vista]!is[current]sort[title]]">>
+

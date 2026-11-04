@@ -1,0 +1,31 @@
+acces_al_tramit: https://tramits.gencat.cat/ca/tramits/
+altres_requisits: Nivell C1 de català
+canal_origen: oposicions
+caption: 1 plaça de Cap d'Àrea de Monuments i Jaciments · Generalitat de Catalunya - Agència…
+cidocamps: canal_origen|data_publicacio|organisme|placa|acces_al_tramit|altres_requisits|data_de_la_prova|expedient|finalitzacio_de_presentacio_de_sollicituds|grup_de_titulacio_o_assimilat|identificador|materies|sistema_de_seleccio|tipus_de_personal|titulacio_requerida|web_de_l_ens_convocant|enllacos_documents|enllacos_butlletins|resum_rss|tots_els_canals|url
+data_de_la_prova: 24/11/2026
+data_pub: 2026-11-02
+data_publicacio: Mon, 02 Nov 2026
+enllacos_butlletins: https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1033254 | https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1044155 | https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1048198 | https://dogc.gencat.cat/ca/document-del-dogc/?documentId=1058158 | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1033254&type=01&language=ca_ES | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1044155&type=01&language=ca_ES | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1048198&type=01&language=ca_ES | https://portaldogc.gencat.cat/utilsEADOP/AppJava/PdfProviderServlet?documentId=1058158&type=01&language=ca_ES | https://tauler.seu-e.cat/detall?idEns=1&idEdicte=637066
+enllacos_documents: https://cultura.gencat.cat/web/.content/dgpc/serveis/agencia/documents/Convocatories-personal-2023/BASES_signed.pdf
+ens: Generalitat de Catalunya - Agència Catalana del Patrimoni Cultural
+expedient: ACPC/301
+finalitzacio_de_presentacio_de_sollicituds: 28/05/2026
+font: cido_24h.csv
+grup_de_titulacio_o_assimilat: A1 - Grau universitari (correspondència amb llicenciatures)
+identificador: 20251230O13
+materies: Història, Museus / Conservació
+organisme: Ens Local / Catalunya
+placa: 1 plaça de Cap d'Àrea de Monuments i Jaciments
+resum_rss: Número de referència: 20251230O13 Data de publicació: 02/11/2026 20:22:07 Ens: Generalitat de Catalunya - Agència Catalana del Patrimoni Cultural
+sistema_de_seleccio: Concurs oposició o valoració de mèrits i prova
+tags: CIDO convocatòria
+termini: 2026-05-28
+tipus_de_personal: Laboral
+title: 20251230O13
+titulacio_requerida: Grau o Llicenciatura en l'àmbit de la Història, o titulació equivalent
+tots_els_canals: oposicions
+url: http://cido.diba.cat/oposicions/20850161/1-plaaa-de-cap-darea-de-monuments-i-jaciments-generalitat-de-catalunya-agancia-catalana-del-patrimoni-cultural
+web_de_l_ens_convocant: https://cultura.gencat.cat/ca/departament/estructura_i_adreces/organismes/dgpc/accio/agencia_patrimoni/convocatories-de-personal/
+
+<<fitxa-cido>>

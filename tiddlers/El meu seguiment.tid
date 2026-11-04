@@ -1,0 +1,44 @@
+title: El meu seguiment
+tags: vista
+
+! El meu seguiment
+
+Des de la fitxa de cada convocatòria pots marcar-la com a '''interessant''', '''sol·licitada'''
+o '''descartada''', i escriure-hi notes. Aquí les tens agrupades. La marca viu al camp
+`estat` de la convocatòria, i la sincronització no la toca mai.
+
+!! Interessants
+
+<table class="cidotaula">
+<tr><th>Publicat</th><th>Convocatòria</th><th>Ens</th><th>Termini</th></tr>
+<$set name="f" value="[get[estat]match[interessant]]"><$list filter="[tag[CIDO]filter<f>!sort[data_pub]]" emptyMessage="Encara no n'has marcada cap.">
+<tr><td><$text text={{{ [<currentTiddler>get[data_pub]] }}}/></td><td><$link to={{!!title}}><$text text={{{ [<currentTiddler>get[caption]] }}}/></$link></td><td><$text text={{{ [<currentTiddler>get[ens]] }}}/></td><td><$text text={{{ [<currentTiddler>get[termini]] }}}/></td></tr>
+</$list></$set>
+</table>
+
+!! Sol·licitades
+
+<table class="cidotaula">
+<tr><th>Publicat</th><th>Convocatòria</th><th>Ens</th><th>Termini</th></tr>
+<$set name="f" value="[get[estat]match[sollicitada]]"><$list filter="[tag[CIDO]filter<f>!sort[data_pub]]" emptyMessage="Encara no n'has presentada cap.">
+<tr><td><$text text={{{ [<currentTiddler>get[data_pub]] }}}/></td><td><$link to={{!!title}}><$text text={{{ [<currentTiddler>get[caption]] }}}/></$link></td><td><$text text={{{ [<currentTiddler>get[ens]] }}}/></td><td><$text text={{{ [<currentTiddler>get[termini]] }}}/></td></tr>
+</$list></$set>
+</table>
+
+!! Descartades
+
+<table class="cidotaula">
+<tr><th>Publicat</th><th>Convocatòria</th><th>Ens</th><th>Termini</th></tr>
+<$set name="f" value="[get[estat]match[descartada]]"><$list filter="[tag[CIDO]filter<f>!sort[data_pub]]" emptyMessage="No n'has descartada cap.">
+<tr><td><$text text={{{ [<currentTiddler>get[data_pub]] }}}/></td><td><$link to={{!!title}}><$text text={{{ [<currentTiddler>get[caption]] }}}/></$link></td><td><$text text={{{ [<currentTiddler>get[ens]] }}}/></td><td><$text text={{{ [<currentTiddler>get[termini]] }}}/></td></tr>
+</$list></$set>
+</table>
+
+!! Sense marcar
+
+Són <strong><$text text={{{ [tag[CIDO]!has[estat]count[]] }}}/></strong> convocatòries sense cap marca.
+
+!! Altres vistes
+
+<<list-links "[tag[vista]!is[current]sort[title]]">>
+
